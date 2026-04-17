@@ -21,18 +21,19 @@ public class PixelObjectManager : MonoBehaviour
     {
         width = w;
         height = h;
+        
         grid = new bool[width, height];
         pixelObjects = new GameObject[width, height];
-        float offsetX = (width - 1) / 2f;
-        float offsetY = (height - 1) / 2f;
+        
+        float offsetX = (width - 1f) / 2f;
+        float offsetY = (height - 1f) / 2f;
+        
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                Vector3 position = new Vector3(x - offsetX, y - offsetY, 0);
-                GameObject pixel = Instantiate(pixelPrefab, Vector3.zero, Quaternion.identity, transform);
-                pixel.transform.SetParent(transform, false);
-                pixel.transform.localPosition = position;
+                GameObject pixel = Instantiate(pixelPrefab, transform);
+                pixel.transform.localPosition = new Vector2(x - offsetX, y - offsetY);
                 pixelObjects[x, y] = pixel;
                 grid[x, y] = true;
             }
