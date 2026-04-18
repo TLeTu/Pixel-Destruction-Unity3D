@@ -6,6 +6,14 @@ public class PixelController : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Collider2D col;
+    public void SettupRigidbody()
+    {
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody2D>();
+            rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        }
+    }
     public void InstaDestroy()
     {
         StartCoroutine(ShrinkAndDestroy());

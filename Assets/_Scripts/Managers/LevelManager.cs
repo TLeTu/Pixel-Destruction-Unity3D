@@ -13,17 +13,17 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
-        PixelBlockController blockController = pixelBlock.GetComponent<PixelBlockController>();
-        if (blockController == null)
-        {
-            Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
-            return;
-        }
-        pixelBlock.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        // GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
+        // PixelBlockController blockController = pixelBlock.GetComponent<PixelBlockController>();
+        // if (blockController == null)
+        // {
+        //     Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
+        //     return;
+        // }
+        // pixelBlock.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
 
-        RegisterBlock(blockController);
-        blockController.Initialize(10, 10);
+        // RegisterBlock(blockController);
+        // blockController.Initialize(10, 10);
     }
 
     // Update is called once per frame
@@ -34,7 +34,7 @@ public class LevelManager : MonoBehaviour
         {
             return;
         }
-        // SpawnBlock();
+        SpawnBlock();
     }
 
     private void SpawnBlock()

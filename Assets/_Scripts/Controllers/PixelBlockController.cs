@@ -168,10 +168,12 @@ public class PixelBlockController : MonoBehaviour
             for (int y = startY; y <= endY; y++)
             {
                 if (!grid[x, y]) continue;
-                TakeDamage(x, y);
+                if (shredderBounds.Contains(transform.TransformPoint(new Vector2(x - offsetX, y - offsetY))))
+                {
+                    TakeDamage(x, y);
+                }
             }
         }
-
         CheckSplitChunks();
     }
 
@@ -200,7 +202,7 @@ public class PixelBlockController : MonoBehaviour
 
         }
 
-        pixel.AddComponent<Rigidbody2D>();
+        pixel.GetComponent<PixelController>()?.SettupRigidbody();
 
         activePixelCount--;
         CheckEmpty();

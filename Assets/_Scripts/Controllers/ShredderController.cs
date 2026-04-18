@@ -1,23 +1,37 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ShredderController : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D collision)
+    private Collider2D shredderCollider;
+    private ContactFilter2D contactFilter;
+    private List<Collider2D> overlapResults = new List<Collider2D>();
+    private void Start()
     {
-        if (collision.gameObject.CompareTag("pixel"))
-        {
-            collision.gameObject.GetComponent<PixelController>()?.InstaDestroy();
-        }
-    }
+        shredderCollider = GetComponent<Collider2D>();
 
-    private void OnTriggerStay2D(Collider2D collision)
+        contactFilter = ContactFilter2D.noFilter;
+        contactFilter.useTriggers = true;
+    }
+    private void FixedUpdate()
     {
-        if (collision.gameObject.CompareTag("pixelBlock"))
+        int overlapCount = shredderCollider.Overlap(contactFilter, overlapResults);
+
+        for (int i = 0; i < overlapCount; i++)
         {
-            PixelBlockController block = collision.gameObject.GetComponent<PixelBlockController>();
-            if (block != null)
+            Collider2D col = overlapResults[i];
+
+            if (col.gameObject.CompareTag("pixel"))
             {
-                block.HitArea(GetComponent<Collider2D>().bounds);
+                col.gameObject.GetComponent<PixelController>()?.InstaDestroy();
+            }
+            else if (col.gameObject.CompareTag("pixelBlock"))
+            {
+                PixelBlockController block = col.gameObject.GetComponent<PixelBlockController>();
+                if (block != null)
+                {
+                    block.HitArea(shredderCollider.bounds);
+                }
             }
         }
     }
