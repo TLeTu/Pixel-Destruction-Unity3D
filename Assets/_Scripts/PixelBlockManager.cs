@@ -10,6 +10,7 @@ public class PixelBlockManager : MonoBehaviour
     private int height;
     private bool[,] grid;
     private GameObject[,] pixelObjects;
+    private int activePixelCount = 0;
 
     public struct PixelTransferData
     {
@@ -42,7 +43,6 @@ public class PixelBlockManager : MonoBehaviour
     public event Action<PixelBlockManager> OnBlockDestroyed;
     private void Start()
     {
-        
     }
 
     private void Update()
@@ -72,6 +72,8 @@ public class PixelBlockManager : MonoBehaviour
                 grid[x, y] = true;
             }
         }
+
+        activePixelCount = width * height;
     }
 
     public void InitiateEmptyBlock(int w, int h)
@@ -81,11 +83,13 @@ public class PixelBlockManager : MonoBehaviour
 
         grid = new bool[width, height];
         pixelObjects = new GameObject[width, height];
+        activePixelCount = 0;
     }
 
     public void AddPixel(int x, int y, GameObject pixel)
     {
         grid[x, y] = true;
+        activePixelCount++;
         pixelObjects[x, y] = pixel;
 
         pixel.transform.SetParent(transform, true);
@@ -142,6 +146,7 @@ public class PixelBlockManager : MonoBehaviour
         float randomX = UnityEngine.Random.Range(-2f, 2f);
         rb.AddForce(new Vector2(randomX, 5f), ForceMode2D.Impulse);
 
+        activePixelCount--;
         CheckSplitChunks();
         CheckEmpty();
     }
@@ -170,6 +175,7 @@ public class PixelBlockManager : MonoBehaviour
             {
                 Debug.Log($"Requesting chunk spawn with {chunks[i].Count} pixels");
                 OnChunkCreated?.Invoke(this, chunks[i]);
+                activePixelCount -= chunks[i].Count;
             }
         }
     }
@@ -258,17 +264,10 @@ public class PixelBlockManager : MonoBehaviour
 
     private void CheckEmpty()
     {
-        for (int x = 0; x < width; x++)
+        if (activePixelCount <= 0)
         {
-            for (int y = 0; y < height; y++)
-            {
-                if (grid[x, y])
-                {
-                    return;
-                }
-            }
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
     private void OnDestroy()
     {
