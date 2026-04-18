@@ -13,16 +13,16 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
-        // PixelBlockManager blockManager = pixelBlock.GetComponent<PixelBlockManager>();
-        // if (blockManager == null)
-        // {
-        //     Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
-        //     return;
-        // }
+        GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
+        PixelBlockManager blockManager = pixelBlock.GetComponent<PixelBlockManager>();
+        if (blockManager == null)
+        {
+            Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+            return;
+        }
 
-        // RegisterBlock(blockManager);
-        // blockManager.Initialize(startWidth, startHeight);
+        RegisterBlock(blockManager);
+        blockManager.Initialize(10, 10);
     }
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class LevelManager : MonoBehaviour
         {
             return;
         }
-        SpawnBlock();
+        // SpawnBlock();
     }
 
     private void SpawnBlock()
