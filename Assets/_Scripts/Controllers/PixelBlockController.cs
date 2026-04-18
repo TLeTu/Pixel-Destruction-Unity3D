@@ -49,14 +49,6 @@ public class PixelBlockController : MonoBehaviour
 
     public event Action<PixelBlockController, List<Vector2Int>> OnChunkCreated;
     public event Action<PixelBlockController> OnBlockDestroyed;
-    private void Start()
-    {
-    }
-
-    private void Update()
-    {
-
-    }
 
     public void Initialize(int w, int h)
     {
@@ -170,23 +162,17 @@ public class PixelBlockController : MonoBehaviour
             return;
         }
 
-        bool anyDamaged = false;
 
         for (int x = startX; x <= endX; x++)
         {
             for (int y = startY; y <= endY; y++)
             {
                 if (!grid[x, y]) continue;
-
                 TakeDamage(x, y);
-                anyDamaged = true;
             }
         }
 
-        if (anyDamaged)
-        {
-            CheckSplitChunks();
-        }
+        CheckSplitChunks();
     }
 
     private void TakeDamage(int x, int y)
@@ -213,6 +199,8 @@ public class PixelBlockController : MonoBehaviour
             col.size *= 0.8f;
 
         }
+
+        pixel.AddComponent<Rigidbody2D>();
 
         activePixelCount--;
         CheckEmpty();

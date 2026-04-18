@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6749095425217091272}
   - component: {fileID: 6668042657811820814}
   - component: {fileID: 9217377412131478472}
-  - component: {fileID: 4322877281554823563}
+  - component: {fileID: 8145998643316310267}
   m_Layer: 0
   m_Name: PixelBlockObject
   m_TagString: pixelBlock
@@ -106,7 +106,7 @@ CompositeCollider2D:
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
   m_CompositeGameObject: {fileID: 749624232273093274}
---- !u!114 &4322877281554823563
+--- !u!114 &8145998643316310267
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,5 +117,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30c11070108aed8b19a96c0b6f0e30ed, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PixelObjectManager
+  m_EditorClassIdentifier: Assembly-CSharp::PixelBlockController
   pixelPrefab: {fileID: 1469865799553241055, guid: adc51f938b5167e7bbe1b42b107f36ab, type: 3}
