@@ -20,6 +20,7 @@ public class LevelManager : MonoBehaviour
             Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
             return;
         }
+        pixelBlock.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
 
         RegisterBlock(blockManager);
         blockManager.Initialize(10, 10);

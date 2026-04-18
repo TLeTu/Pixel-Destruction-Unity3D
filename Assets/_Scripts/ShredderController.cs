@@ -18,7 +18,7 @@ public class ShredderController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("pixel"))
         {
-            Destroy(collision.gameObject);
+            collision.gameObject.GetComponent<PixelController>()?.InstaDestroy();
         }
     }
 
