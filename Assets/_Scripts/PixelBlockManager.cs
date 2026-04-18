@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PixelBlockManager : MonoBehaviour
@@ -87,7 +88,7 @@ public class PixelBlockManager : MonoBehaviour
         grid[x, y] = true;
         pixelObjects[x, y] = pixel;
 
-        pixel.transform.SetParent(transform);
+        pixel.transform.SetParent(transform, true);
         float offsetX = (width - 1f) / 2f;
         float offsetY = (height - 1f) / 2f;
 
@@ -269,7 +270,7 @@ public class PixelBlockManager : MonoBehaviour
         }
         Destroy(gameObject);
     }
-    private void Oestroy()
+    private void OnDestroy()
     {
         OnBlockDestroyed?.Invoke(this);
     }

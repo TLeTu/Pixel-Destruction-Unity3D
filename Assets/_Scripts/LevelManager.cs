@@ -69,7 +69,15 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        GameObject chunkObj = Instantiate(pixelBlockPrefab, transferData.worldCenter, Quaternion.identity, transform);
+        GameObject chunkObj = Instantiate(pixelBlockPrefab, transferData.worldCenter, sourceBlock.transform.rotation, sourceBlock.transform);
+        Rigidbody2D sourceRb = sourceBlock.GetComponent<Rigidbody2D>();
+        Rigidbody2D chunkRb = chunkObj.GetComponent<Rigidbody2D>();
+        if (sourceRb != null && chunkRb != null)
+        {
+            chunkRb.linearVelocity = sourceRb.linearVelocity;
+            chunkRb.angularVelocity = sourceRb.angularVelocity;
+        }
+
         PixelBlockManager chunkBlock = chunkObj.GetComponent<PixelBlockManager>();
         if (chunkBlock == null)
         {
