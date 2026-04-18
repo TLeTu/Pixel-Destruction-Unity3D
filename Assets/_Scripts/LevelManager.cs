@@ -4,30 +4,55 @@ using System.Collections.Generic;
 public class LevelManager : MonoBehaviour
 {
     public GameObject pixelBlockPrefab;
-    [SerializeField] private int startWidth = 10;
-    [SerializeField] private int startHeight = 10;
-
+    public LevelConfig levelConfig;
+    public GameObject spawnPoint;
+    public float spawnTime = 2f;
     private readonly HashSet<PixelBlockManager> registeredBlocks = new HashSet<PixelBlockManager>();
+    private float spawnTimer = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
-        PixelBlockManager blockManager = pixelBlock.GetComponent<PixelBlockManager>();
-        if (blockManager == null)
-        {
-            Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
-            return;
-        }
+        // GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
+        // PixelBlockManager blockManager = pixelBlock.GetComponent<PixelBlockManager>();
+        // if (blockManager == null)
+        // {
+        //     Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+        //     return;
+        // }
 
-        RegisterBlock(blockManager);
-        blockManager.Initialize(startWidth, startHeight);
+        // RegisterBlock(blockManager);
+        // blockManager.Initialize(startWidth, startHeight);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        // Call spawn block every spawnTime seconds
+        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0)
+        {
+            return;
+        }
+        SpawnBlock();
+    }
+
+    private void SpawnBlock()
+    {
+        spawnTimer += Time.deltaTime;
+        if (spawnTimer >= spawnTime)
+        {
+            spawnTimer = 0f;
+            BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
+            GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
+            PixelBlockManager blockManager = blockObj.GetComponent<PixelBlockManager>();
+            if (blockManager == null)            {
+                Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+                Destroy(blockObj);
+                return;
+            }
+            RegisterBlock(blockManager);
+            blockManager.Initialize(blockData.width, blockData.height);
+        }
     }
 
     private void OnDestroy()
@@ -52,7 +77,7 @@ public class LevelManager : MonoBehaviour
         }
 
         block.OnChunkCreated += HandleChunkCreated;
-        block.OnBlockDestroyed += HandleBlockDestroyed;     
+        block.OnBlockDestroyed += HandleBlockDestroyed;
         registeredBlocks.Add(block);
     }
 

@@ -645,8 +645,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   pixelBlockPrefab: {fileID: 749624232273093274, guid: c3f2a38162755088f854189666b0aa7c, type: 3}
-  startWidth: 4
-  startHeight: 4
+  levelConfig: {fileID: 11400000, guid: 79f2f8a2327eab75baa03a580289dcda, type: 2}
+  spawnPoint: {fileID: 1713827233}
+  spawnTime: 2
 --- !u!1 &1423044188
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,6 +813,37 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &1713827233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1713827234}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1713827234
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713827233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 80, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2017575722
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,3 +1003,4 @@ SceneRoots:
   - {fileID: 1423044192}
   - {fileID: 2111421301}
   - {fileID: 1130946918}
+  - {fileID: 1713827234}
