@@ -122,8 +122,36 @@ public class PixelBlockManager : MonoBehaviour
             if (grid[x, y])
             {
                 TakeDamage(x, y);
+                CheckSplitChunks();
             }
         }
+    }
+
+    public void HitArea(Bounds shredderBounds)
+    {
+        float leftEdge = shredderBounds.min.x;
+        float rightEdge = shredderBounds.max.x;
+
+        float bottomEdge = shredderBounds.min.y;
+        float topEdge = shredderBounds.max.y;
+
+        Vector2 localBottomLeft = transform.InverseTransformPoint(new Vector2(leftEdge, bottomEdge));
+        Vector2 localTopRight = transform.InverseTransformPoint(new Vector2(rightEdge, topEdge));
+
+        for (int x = Mathf.FloorToInt(localBottomLeft.x + (width - 1f) / 2f); x <= Mathf.CeilToInt(localTopRight.x + (width - 1f) / 2f); x++)
+        {
+            for (int y = Mathf.FloorToInt(localBottomLeft.y + (height - 1f) / 2f); y <= Mathf.CeilToInt(localTopRight.y + (height - 1f) / 2f); y++)
+            {
+                if (x >= 0 && x < width && y >= 0 && y < height)
+                {
+                    if (grid[x, y])
+                    {
+                        TakeDamage(x, y);
+                    }
+                }
+            }
+        }
+        CheckSplitChunks();
     }
 
     private void TakeDamage(int x, int y)
@@ -155,7 +183,6 @@ public class PixelBlockManager : MonoBehaviour
         rb.AddForce(new Vector2(randomX, 5f), ForceMode2D.Impulse);
 
         activePixelCount--;
-        CheckSplitChunks();
         CheckEmpty();
     }
 

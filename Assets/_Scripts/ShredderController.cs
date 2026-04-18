@@ -21,4 +21,16 @@ public class ShredderController : MonoBehaviour
             Destroy(collision.gameObject);
         }
     }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("pixelBlock"))
+        {
+            PixelBlockManager block = collision.gameObject.GetComponent<PixelBlockManager>();
+            if (block != null)
+            {
+                block.HitArea(GetComponent<Collider2D>().bounds);
+            }
+        }
+    }
 }

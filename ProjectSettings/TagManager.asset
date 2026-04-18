@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - pixel
+  - pixelBlock
   layers:
   - Default
   - TransparentFX
