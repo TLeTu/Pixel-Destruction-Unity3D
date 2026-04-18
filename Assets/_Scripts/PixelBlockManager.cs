@@ -5,14 +5,42 @@ using UnityEngine;
 public class PixelBlockManager : MonoBehaviour
 {
     public GameObject pixelPrefab;
-    public GameObject chunkPrefab;
     private int width;
     private int height;
     private bool[,] grid;
     private GameObject[,] pixelObjects;
+
+    public struct PixelTransferData
+    {
+        public int x;
+        public int y;
+        public GameObject pixel;
+
+        public PixelTransferData(int x, int y, GameObject pixel)
+        {
+            this.x = x;
+            this.y = y;
+            this.pixel = pixel;
+        }
+    }
+
+    public class ChunkTransferData
+    {
+        public Vector2 worldCenter;
+        public int width;
+        public int height;
+        public List<PixelTransferData> pixels;
+
+        public ChunkTransferData()
+        {
+            pixels = new List<PixelTransferData>();
+        }
+    }
+
+    public event Action<PixelBlockManager, List<Vector2Int>> OnChunkCreated;
     private void Start()
     {
-
+        
     }
 
     private void Update()
@@ -134,13 +162,20 @@ public class PixelBlockManager : MonoBehaviour
             chunks.Sort((a, b) => b.Count.CompareTo(a.Count));
             for (int i = 1; i < chunks.Count; i++)
             {
-                CreateChunk(chunks[i]);
+                Debug.Log($"Requesting chunk spawn with {chunks[i].Count} pixels");
+                OnChunkCreated?.Invoke(this, chunks[i]);
             }
         }
     }
 
-    private void CreateChunk(List<Vector2Int> chunkPixels)
+    public ChunkTransferData DetachChunk(List<Vector2Int> chunkPixels)
     {
+        ChunkTransferData chunkData = new ChunkTransferData();
+        if (chunkPixels == null || chunkPixels.Count == 0)
+        {
+            return chunkData;
+        }
+
         int minX = int.MaxValue, maxX = int.MinValue, minY = int.MaxValue, maxY = int.MinValue;
         foreach (var pos in chunkPixels)
         {
@@ -157,13 +192,10 @@ public class PixelBlockManager : MonoBehaviour
         float chunkCenterY = (minY + maxY) / 2f;
 
         Vector2 chunkCenterLocalPos = new Vector2(chunkCenterX - oldOffSetX, chunkCenterY - oldOffSetY);
-        Vector2 chunkCenterWorldPos = transform.TransformPoint(chunkCenterLocalPos);
+        chunkData.worldCenter = transform.TransformPoint(chunkCenterLocalPos);
 
-        int newWidth = maxX - minX + 1;
-        int newHeight = maxY - minY + 1;
-
-        GameObject chunkObj = Instantiate(chunkPrefab, chunkCenterWorldPos, Quaternion.identity);
-        chunkObj.GetComponent<PixelBlockManager>().InitiateEmptyBlock(newWidth, newHeight);
+        chunkData.width = maxX - minX + 1;
+        chunkData.height = maxY - minY + 1;
 
         foreach (var pos in chunkPixels)
         {
@@ -172,10 +204,13 @@ public class PixelBlockManager : MonoBehaviour
             {
                 int newX = pos.x - minX;
                 int newY = pos.y - minY;
-                chunkObj.GetComponent<PixelBlockManager>().AddPixel(newX, newY, pixel);
+                chunkData.pixels.Add(new PixelTransferData(newX, newY, pixel));
                 pixelObjects[pos.x, pos.y] = null;
+                grid[pos.x, pos.y] = false;
             }
         }
+
+        return chunkData;
     }
 
     private void FloodFill(int x, int y, bool[,] visited, List<Vector2Int> chunk)
