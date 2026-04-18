@@ -12,6 +12,14 @@ public class PixelBlockManager : MonoBehaviour
     private GameObject[,] pixelObjects;
     private int activePixelCount = 0;
 
+    static readonly Vector2Int[] directions = new Vector2Int[]
+    {
+        new Vector2Int(0, 1),   // Up
+        new Vector2Int(0, -1),  // Down
+        new Vector2Int(-1, 0),  // Left
+        new Vector2Int(1, 0)    // Right
+    };
+
     public struct PixelTransferData
     {
         public int x;
@@ -97,7 +105,7 @@ public class PixelBlockManager : MonoBehaviour
         float offsetY = (height - 1f) / 2f;
 
         pixel.transform.localPosition = new Vector2(x - offsetX, y - offsetY);
-    }   
+    }
 
     public void HitAtPoint(Vector2 worldHitPoint)
     {
@@ -196,7 +204,7 @@ public class PixelBlockManager : MonoBehaviour
             minY = Math.Min(minY, pos.y);
             maxY = Math.Max(maxY, pos.y);
         }
-        
+
         float oldOffSetX = (width - 1f) / 2f;
         float oldOffSetY = (height - 1f) / 2f;
 
@@ -235,12 +243,6 @@ public class PixelBlockManager : MonoBehaviour
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
         queue.Enqueue(new Vector2Int(x, y));
 
-        Vector2Int[] directions = {
-            new Vector2Int(1, 0),
-            new Vector2Int(-1, 0),
-            new Vector2Int(0, 1),
-            new Vector2Int(0, -1)
-        };
 
         while (queue.Count > 0)
         {
