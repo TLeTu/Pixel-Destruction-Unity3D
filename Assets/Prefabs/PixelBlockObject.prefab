@@ -119,4 +119,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PixelObjectManager
   pixelPrefab: {fileID: 1469865799553241055, guid: adc51f938b5167e7bbe1b42b107f36ab, type: 3}
-  chunkPrefab: {fileID: 749624232273093274}

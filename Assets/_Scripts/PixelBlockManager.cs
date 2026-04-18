@@ -38,6 +38,7 @@ public class PixelBlockManager : MonoBehaviour
     }
 
     public event Action<PixelBlockManager, List<Vector2Int>> OnChunkCreated;
+    public event Action<PixelBlockManager> OnBlockDestroyed;
     private void Start()
     {
         
@@ -126,18 +127,22 @@ public class PixelBlockManager : MonoBehaviour
         {
             rend.material.color = Color.red;
         }
-        // Scale down the pixel
+
+
         pixel.transform.SetParent(null);
         BoxCollider2D col = pixel.GetComponent<BoxCollider2D>();
         if (col != null)
         {
             col.compositeOperation = Collider2D.CompositeOperation.None;
+            col.size *= 0.8f;
+
         }
         Rigidbody2D rb = pixel.AddComponent<Rigidbody2D>();
         float randomX = UnityEngine.Random.Range(-2f, 2f);
         rb.AddForce(new Vector2(randomX, 5f), ForceMode2D.Impulse);
 
         CheckSplitChunks();
+        CheckEmpty();
     }
 
     private void CheckSplitChunks()
@@ -248,5 +253,24 @@ public class PixelBlockManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void CheckEmpty()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (grid[x, y])
+                {
+                    return;
+                }
+            }
+        }
+        Destroy(gameObject);
+    }
+    private void Oestroy()
+    {
+        OnBlockDestroyed?.Invoke(this);
     }
 }

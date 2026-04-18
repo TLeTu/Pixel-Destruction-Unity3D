@@ -37,6 +37,7 @@ public class LevelManager : MonoBehaviour
             if (block != null)
             {
                 block.OnChunkCreated -= HandleChunkCreated;
+                block.OnBlockDestroyed -= HandleBlockDestroyed;
             }
         }
 
@@ -51,6 +52,7 @@ public class LevelManager : MonoBehaviour
         }
 
         block.OnChunkCreated += HandleChunkCreated;
+        block.OnBlockDestroyed += HandleBlockDestroyed;     
         registeredBlocks.Add(block);
     }
 
@@ -84,4 +86,10 @@ public class LevelManager : MonoBehaviour
             chunkBlock.AddPixel(pixelData.x, pixelData.y, pixelData.pixel);
         }
     }
+
+    private void HandleBlockDestroyed(PixelBlockManager destroyedBlock)
+    {
+        registeredBlocks.Remove(destroyedBlock);
+    }
+
 }

@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-// BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ DÙNG HỆ THỐNG MỚI
 using UnityEngine.InputSystem; 
 
 public class InputController : MonoBehaviour
