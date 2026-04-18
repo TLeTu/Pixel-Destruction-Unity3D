@@ -26,7 +26,7 @@ public class ShredderController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("pixelBlock"))
         {
-            PixelBlockManager block = collision.gameObject.GetComponent<PixelBlockManager>();
+            PixelBlockController block = collision.gameObject.GetComponent<PixelBlockController>();
             if (block != null)
             {
                 block.HitArea(GetComponent<Collider2D>().bounds);

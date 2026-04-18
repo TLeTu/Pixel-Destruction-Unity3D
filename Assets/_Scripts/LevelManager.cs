@@ -7,23 +7,23 @@ public class LevelManager : MonoBehaviour
     public LevelConfig levelConfig;
     public GameObject spawnPoint;
     public float spawnTime = 2f;
-    private readonly HashSet<PixelBlockManager> registeredBlocks = new HashSet<PixelBlockManager>();
+    private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
-        PixelBlockManager blockManager = pixelBlock.GetComponent<PixelBlockManager>();
-        if (blockManager == null)
+        PixelBlockController blockController = pixelBlock.GetComponent<PixelBlockController>();
+        if (blockController == null)
         {
-            Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+            Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
             return;
         }
         pixelBlock.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
 
-        RegisterBlock(blockManager);
-        blockManager.Initialize(10, 10);
+        RegisterBlock(blockController);
+        blockController.Initialize(10, 10);
     }
 
     // Update is called once per frame
@@ -45,14 +45,15 @@ public class LevelManager : MonoBehaviour
             spawnTimer = 0f;
             BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
             GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
-            PixelBlockManager blockManager = blockObj.GetComponent<PixelBlockManager>();
-            if (blockManager == null)            {
-                Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+            PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();
+            if (blockController == null)
+            {
+                Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
                 Destroy(blockObj);
                 return;
             }
-            RegisterBlock(blockManager);
-            blockManager.Initialize(blockData.width, blockData.height);
+            RegisterBlock(blockController);
+            blockController.Initialize(blockData.width, blockData.height);
         }
     }
 
@@ -70,7 +71,7 @@ public class LevelManager : MonoBehaviour
         registeredBlocks.Clear();
     }
 
-    private void RegisterBlock(PixelBlockManager block)
+    private void RegisterBlock(PixelBlockController block)
     {
         if (block == null || registeredBlocks.Contains(block))
         {
@@ -82,14 +83,14 @@ public class LevelManager : MonoBehaviour
         registeredBlocks.Add(block);
     }
 
-    private void HandleChunkCreated(PixelBlockManager sourceBlock, List<Vector2Int> chunkPixels)
+    private void HandleChunkCreated(PixelBlockController sourceBlock, List<Vector2Int> chunkPixels)
     {
         if (sourceBlock == null || chunkPixels == null || chunkPixels.Count == 0)
         {
             return;
         }
 
-        PixelBlockManager.ChunkTransferData transferData = sourceBlock.DetachChunk(chunkPixels);
+        PixelBlockController.ChunkTransferData transferData = sourceBlock.DetachChunk(chunkPixels);
         if (transferData.pixels.Count == 0)
         {
             return;
@@ -104,10 +105,10 @@ public class LevelManager : MonoBehaviour
             chunkRb.angularVelocity = sourceRb.angularVelocity;
         }
 
-        PixelBlockManager chunkBlock = chunkObj.GetComponent<PixelBlockManager>();
+        PixelBlockController chunkBlock = chunkObj.GetComponent<PixelBlockController>();
         if (chunkBlock == null)
         {
-            Debug.LogError("pixelBlockPrefab is missing PixelBlockManager component.");
+            Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
             Destroy(chunkObj);
             return;
         }
@@ -121,7 +122,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private void HandleBlockDestroyed(PixelBlockManager destroyedBlock)
+    private void HandleBlockDestroyed(PixelBlockController destroyedBlock)
     {
         registeredBlocks.Remove(destroyedBlock);
     }

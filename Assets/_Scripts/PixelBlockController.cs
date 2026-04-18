@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PixelBlockManager : MonoBehaviour
+public class PixelBlockController : MonoBehaviour
 {
     public GameObject pixelPrefab;
     private int width;
@@ -47,8 +47,8 @@ public class PixelBlockManager : MonoBehaviour
         }
     }
 
-    public event Action<PixelBlockManager, List<Vector2Int>> OnChunkCreated;
-    public event Action<PixelBlockManager> OnBlockDestroyed;
+    public event Action<PixelBlockController, List<Vector2Int>> OnChunkCreated;
+    public event Action<PixelBlockController> OnBlockDestroyed;
     private void Start()
     {
     }
@@ -129,29 +129,64 @@ public class PixelBlockManager : MonoBehaviour
 
     public void HitArea(Bounds shredderBounds)
     {
-        float leftEdge = shredderBounds.min.x;
-        float rightEdge = shredderBounds.max.x;
-
-        float bottomEdge = shredderBounds.min.y;
-        float topEdge = shredderBounds.max.y;
-
-        Vector2 localBottomLeft = transform.InverseTransformPoint(new Vector2(leftEdge, bottomEdge));
-        Vector2 localTopRight = transform.InverseTransformPoint(new Vector2(rightEdge, topEdge));
-
-        for (int x = Mathf.FloorToInt(localBottomLeft.x + (width - 1f) / 2f); x <= Mathf.CeilToInt(localTopRight.x + (width - 1f) / 2f); x++)
+        Vector2[] worldCorners = new Vector2[4]
         {
-            for (int y = Mathf.FloorToInt(localBottomLeft.y + (height - 1f) / 2f); y <= Mathf.CeilToInt(localTopRight.y + (height - 1f) / 2f); y++)
+        new Vector2(shredderBounds.min.x, shredderBounds.min.y),
+        new Vector2(shredderBounds.min.x, shredderBounds.max.y),
+        new Vector2(shredderBounds.max.x, shredderBounds.min.y),
+        new Vector2(shredderBounds.max.x, shredderBounds.max.y)
+        };
+
+        float minLocalX = float.PositiveInfinity;
+        float maxLocalX = float.NegativeInfinity;
+        float minLocalY = float.PositiveInfinity;
+        float maxLocalY = float.NegativeInfinity;
+
+        for (int i = 0; i < worldCorners.Length; i++)
+        {
+            Vector2 local = transform.InverseTransformPoint(worldCorners[i]);
+
+            if (local.x < minLocalX) minLocalX = local.x;
+            if (local.x > maxLocalX) maxLocalX = local.x;
+            if (local.y < minLocalY) minLocalY = local.y;
+            if (local.y > maxLocalY) maxLocalY = local.y;
+        }
+
+        float offsetX = (width - 1f) / 2f;
+        float offsetY = (height - 1f) / 2f;
+
+        int startX = Mathf.FloorToInt(minLocalX + offsetX);
+        int endX = Mathf.CeilToInt(maxLocalX + offsetX);
+        int startY = Mathf.FloorToInt(minLocalY + offsetY);
+        int endY = Mathf.CeilToInt(maxLocalY + offsetY);
+
+        startX = Mathf.Clamp(startX, 0, width - 1);
+        endX = Mathf.Clamp(endX, 0, width - 1);
+        startY = Mathf.Clamp(startY, 0, height - 1);
+        endY = Mathf.Clamp(endY, 0, height - 1);
+
+        if (startX > endX || startY > endY)
+        {
+            return;
+        }
+
+        bool anyDamaged = false;
+
+        for (int x = startX; x <= endX; x++)
+        {
+            for (int y = startY; y <= endY; y++)
             {
-                if (x >= 0 && x < width && y >= 0 && y < height)
-                {
-                    if (grid[x, y])
-                    {
-                        TakeDamage(x, y);
-                    }
-                }
+                if (!grid[x, y]) continue;
+
+                TakeDamage(x, y);
+                anyDamaged = true;
             }
         }
-        CheckSplitChunks();
+
+        if (anyDamaged)
+        {
+            CheckSplitChunks();
+        }
     }
 
     private void TakeDamage(int x, int y)
@@ -178,9 +213,6 @@ public class PixelBlockManager : MonoBehaviour
             col.size *= 0.8f;
 
         }
-        Rigidbody2D rb = pixel.AddComponent<Rigidbody2D>();
-        float randomX = UnityEngine.Random.Range(-2f, 2f);
-        rb.AddForce(new Vector2(randomX, 5f), ForceMode2D.Impulse);
 
         activePixelCount--;
         CheckEmpty();

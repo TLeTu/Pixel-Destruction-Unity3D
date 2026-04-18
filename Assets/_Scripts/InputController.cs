@@ -37,7 +37,7 @@ public class InputController : MonoBehaviour
             if (hitCollider != null)
             {
                 Debug.Log($"Hit object: {hitCollider.gameObject.name}");
-                PixelBlockManager block = hitCollider.GetComponent<PixelBlockManager>();
+                PixelBlockController block = hitCollider.GetComponent<PixelBlockController>();
                 if (block != null)
                 {
                     block.HitAtPoint(worldPos);
