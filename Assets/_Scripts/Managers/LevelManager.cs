@@ -3,12 +3,17 @@ using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager instance;
     public GameObject pixelBlockPrefab;
     public LevelConfig levelConfig;
     public GameObject spawnPoint;
     public float spawnTime = 2f;
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
+    void Awake()
+    {
+        instance = this;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
