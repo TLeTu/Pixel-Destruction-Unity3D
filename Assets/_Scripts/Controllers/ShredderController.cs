@@ -6,14 +6,14 @@ public class ShredderController : MonoBehaviour
     private Collider2D shredderCollider;
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
-    private void Start()
+    void Start()
     {
         shredderCollider = GetComponent<Collider2D>();
 
         contactFilter = ContactFilter2D.noFilter;
         contactFilter.useTriggers = true;
     }
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         int overlapCount = shredderCollider.Overlap(contactFilter, overlapResults);
 

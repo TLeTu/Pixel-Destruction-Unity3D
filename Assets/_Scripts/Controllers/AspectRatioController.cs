@@ -7,12 +7,12 @@ public class AspectRatioController : MonoBehaviour
     public float targetAspectRatio = 9f / 16f; 
     private Camera _camera;
 
-    private void Start()
+    void Start()
     {
         _camera = GetComponent<Camera>();
     }
 
-    private void Update()
+    void Update()
     {
         SetCameraAspect();
     }

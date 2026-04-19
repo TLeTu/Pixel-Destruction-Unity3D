@@ -45,4 +45,13 @@ public class InputController : MonoBehaviour
             }
         }
     }
+    private void EnableInput()
+    {
+        enabled = true;
+    }
+
+    private void DisableInput()
+    {
+        enabled = false;
+    }
 }
