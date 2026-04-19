@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
     public float spawnTime = 2f;
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
+    private bool isSpawning = false;
     void Awake()
     {
         instance = this;
@@ -18,28 +19,22 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // GameObject pixelBlock = Instantiate(pixelBlockPrefab, transform.position, Quaternion.identity, transform);
-        // PixelBlockController blockController = pixelBlock.GetComponent<PixelBlockController>();
-        // if (blockController == null)
-        // {
-        //     Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
-        //     return;
-        // }
-        // pixelBlock.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
-
-        // RegisterBlock(blockController);
-        // blockController.Initialize(10, 10);
+        GameManager.instance.OnGameStarted += StartLevel;   
     }
 
     // Update is called once per frame
     void Update()
     {
         // Call spawn block every spawnTime seconds
-        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0)
+        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false)
         {
             return;
         }
         SpawnBlock();
+    }
+    private void StartLevel()
+    {
+        isSpawning = true;
     }
 
     private void SpawnBlock()
@@ -59,23 +54,9 @@ public class LevelManager : MonoBehaviour
             }
             RegisterBlock(blockController);
             blockController.Initialize(blockData.width, blockData.height);
+            blockController.ConfigBlock(levelConfig.maxTapDamageRadius, levelConfig.minTapDamage);
         }
     }
-
-    private void OnDestroy()
-    {
-        foreach (var block in registeredBlocks)
-        {
-            if (block != null)
-            {
-                block.OnChunkCreated -= HandleChunkCreated;
-                block.OnBlockDestroyed -= HandleBlockDestroyed;
-            }
-        }
-
-        registeredBlocks.Clear();
-    }
-
     private void RegisterBlock(PixelBlockController block)
     {
         if (block == null || registeredBlocks.Contains(block))
@@ -120,6 +101,7 @@ public class LevelManager : MonoBehaviour
 
         RegisterBlock(chunkBlock);
         chunkBlock.InitiateEmptyBlock(transferData.width, transferData.height);
+        chunkBlock.ConfigBlock(sourceBlock.maxDamageRadius, sourceBlock.minDamage);
 
         foreach (var pixelData in transferData.pixels)
         {
@@ -130,6 +112,8 @@ public class LevelManager : MonoBehaviour
     private void HandleBlockDestroyed(PixelBlockController destroyedBlock)
     {
         registeredBlocks.Remove(destroyedBlock);
+        destroyedBlock.OnChunkCreated -= HandleChunkCreated;
+        destroyedBlock.OnBlockDestroyed -= HandleBlockDestroyed;
     }
 
 }

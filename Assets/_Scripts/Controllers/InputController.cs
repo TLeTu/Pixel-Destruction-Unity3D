@@ -9,6 +9,12 @@ public class InputController : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
+        GameManager.instance.OnGameStarted += EnableInput;
+        GameManager.instance.OnGameResumed += EnableInput;
+        GameManager.instance.OnMainMenu += DisableInput;
+        GameManager.instance.OnGameWin += DisableInput;
+        GameManager.instance.OnGamePaused += DisableInput;
+        DisableInput();
     }
 
     void Update()

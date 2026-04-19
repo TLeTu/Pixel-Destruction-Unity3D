@@ -10,25 +10,26 @@ public class UIManager : MonoBehaviour
     }
     void Start()
     {
-        GameManager.instance.OnMainMenu += ShowMainMenu;
-        GameManager.instance.OnGameStarted += ShowGameUI;
+        GameManager.instance.OnMainMenu += () => ShowPanel(mainMenuPanel);
     }
-    public void ShowMainMenu()
+
+    private void ShowPanel(GameObject panel)
     {
-        // Implement logic to show main menu UI
-        if (mainMenuPanel != null)
+        if (panel != null && !panel.activeSelf)
         {
-            mainMenuPanel.SetActive(true);
+            panel.SetActive(true);
         }
     }
-    public void ShowGameUI()
+    private void HidePanel(GameObject panel)
     {
-        // Implement logic to show in-game UI
+        if (panel != null && panel.activeSelf)
+        {
+            panel.SetActive(false);
+        }
     }
     public void MenuPlayButton()
     {
-        // Implement logic for play button in main menu
-        ShowGameUI();
+        HidePanel(mainMenuPanel);
         GameManager.instance.SetGameState(GameState.Playing);
     }
 }

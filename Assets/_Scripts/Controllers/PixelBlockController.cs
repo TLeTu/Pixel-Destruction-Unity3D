@@ -6,6 +6,8 @@ using UnityEngine;
 public class PixelBlockController : MonoBehaviour
 {
     public GameObject pixelPrefab;
+    public int maxDamageRadius = 3;
+    public int minDamage = 1;
     private int width;
     private int height;
     private bool[,] grid;
@@ -86,6 +88,12 @@ public class PixelBlockController : MonoBehaviour
         activePixelCount = 0;
     }
 
+    public void ConfigBlock(int maxDamageRadius, int minDamage)
+    {
+        this.maxDamageRadius = maxDamageRadius;
+        this.minDamage = minDamage;
+    }
+
     public void AddPixel(int x, int y, GameObject pixel)
     {
         grid[x, y] = true;
@@ -111,11 +119,22 @@ public class PixelBlockController : MonoBehaviour
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
             Debug.Log($"Hit at local grid position: ({x}, {y})");
-            if (grid[x, y])
+            // if (grid[x, y])
+            // {
+            //     TakeDamage(x, y);
+            //     CheckSplitChunks();
+            // }
+            CalculateDamageArea(x, y, out int startX, out int endX, out int startY, out int endY);
+            for (int i = startX; i <= endX; i++)
             {
-                TakeDamage(x, y);
-                CheckSplitChunks();
+                for (int j = startY; j <= endY; j++)                {
+                    if (grid[i, j])
+                    {
+                        TakeDamage(i, j);
+                    }
+                }
             }
+            CheckSplitChunks();
         }
     }
 
@@ -206,6 +225,14 @@ public class PixelBlockController : MonoBehaviour
 
         activePixelCount--;
         CheckEmpty();
+    }
+
+    private void CalculateDamageArea(int centerX, int centerY, out int startX, out int endX, out int startY, out int endY)
+    {
+        startX = Mathf.Max(0, centerX - maxDamageRadius);
+        endX = Mathf.Min(width - 1, centerX + maxDamageRadius);
+        startY = Mathf.Max(0, centerY - maxDamageRadius);
+        endY = Mathf.Min(height - 1, centerY + maxDamageRadius);
     }
 
     private void CheckSplitChunks()
