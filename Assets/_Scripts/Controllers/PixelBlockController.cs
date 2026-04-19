@@ -119,11 +119,7 @@ public class PixelBlockController : MonoBehaviour
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
             Debug.Log($"Hit at local grid position: ({x}, {y})");
-            // if (grid[x, y])
-            // {
-            //     TakeDamage(x, y);
-            //     CheckSplitChunks();
-            // }
+            
             CalculateDamageArea(x, y, out int startX, out int endX, out int startY, out int endY);
             for (int i = startX; i <= endX; i++)
             {
@@ -227,12 +223,13 @@ public class PixelBlockController : MonoBehaviour
         CheckEmpty();
     }
 
-    private void CalculateDamageArea(int centerX, int centerY, out int startX, out int endX, out int startY, out int endY)
+    private void CalculateDamageArea(int hitX, int hitY, out int startX, out int endX, out int startY, out int endY)
     {
-        startX = Mathf.Max(0, centerX - maxDamageRadius);
-        endX = Mathf.Min(width - 1, centerX + maxDamageRadius);
-        startY = Mathf.Max(0, centerY - maxDamageRadius);
-        endY = Mathf.Min(height - 1, centerY + maxDamageRadius);
+        //Later
+        startX = 0;
+        endX = 0;
+        startY = 0;
+        endY = 0;
     }
 
     private void CheckSplitChunks()
