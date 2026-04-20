@@ -79,12 +79,12 @@ public class LevelManager : MonoBehaviour
             return;
         }
 
-        block.OnChunkCreated += HandleChunkCreated;
+        block.OnChunkCreated += HandleBlockCreated;
         block.OnBlockDestroyed += HandleBlockDestroyed;
         registeredBlocks.Add(block);
     }
 
-    private void HandleChunkCreated(PixelBlockController sourceBlock, List<Vector2Int> chunkPixels)
+    private void HandleBlockCreated(PixelBlockController sourceBlock, List<Vector2Int> chunkPixels)
     {
         if (sourceBlock == null || chunkPixels == null || chunkPixels.Count == 0)
         {
@@ -126,7 +126,7 @@ public class LevelManager : MonoBehaviour
     private void HandleBlockDestroyed(PixelBlockController destroyedBlock)
     {
         registeredBlocks.Remove(destroyedBlock);
-        destroyedBlock.OnChunkCreated -= HandleChunkCreated;
+        destroyedBlock.OnChunkCreated -= HandleBlockCreated;
         destroyedBlock.OnBlockDestroyed -= HandleBlockDestroyed;
     }
 

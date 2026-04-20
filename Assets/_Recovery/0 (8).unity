@@ -319,7 +319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!58 &273027776
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -816,7 +816,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 676273719}
-  - {fileID: 1340472125}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &676273718
@@ -829,7 +828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 676273719}
   m_Layer: 0
-  m_Name: AttachedPixelPool
+  m_Name: PixelPool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1379,7 +1378,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &1053603136
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1582,37 +1581,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   mainMenuPanel: {fileID: 1023745054}
---- !u!1 &1340472124
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1340472125}
-  m_Layer: 0
-  m_Name: DetachedPixelPool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1340472125
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1340472124}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 526437886}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1423044188
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,10 +1844,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081d27df1d84094c39f69476f47abf6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoolManager
-  attachedPixelPrefab: {fileID: 3757051769099870076, guid: 130490616a785476ab9e18c071259519, type: 3}
-  detachedPixelPrefab: {fileID: 8871523844912378248, guid: 7c0ad163ce8f7ef79aabe045c9b38ceb, type: 3}
-  attachedPixelPoolContainer: {fileID: 676273718}
-  detachedPixelPoolContainer: {fileID: 1340472124}
+  pixelPrefab: {fileID: 1469865799553241055, guid: adc51f938b5167e7bbe1b42b107f36ab, type: 3}
+  pixelPoolContainer: {fileID: 676273718}
   initialPoolSize: 100
 --- !u!1 &1713827233
 GameObject:

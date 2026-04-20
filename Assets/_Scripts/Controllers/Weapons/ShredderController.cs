@@ -15,23 +15,25 @@ public class ShredderController : MonoBehaviour
     }
     void FixedUpdate()
     {
+        // clear previous results
+        overlapResults.Clear();
         int overlapCount = shredderCollider.Overlap(contactFilter, overlapResults);
 
         for (int i = 0; i < overlapCount; i++)
         {
             Collider2D col = overlapResults[i];
 
-            if (col.gameObject.CompareTag("pixel"))
+            PixelBlockController block = col.GetComponent<PixelBlockController>();
+            if (block != null)
             {
-                col.gameObject.GetComponent<PixelController>()?.InstaDestroy();
+                block.HitArea(shredderCollider.bounds);
+                continue;
             }
-            else if (col.gameObject.CompareTag("pixelBlock"))
+
+            PixelController pixel = col.GetComponent<PixelController>();
+            if (pixel != null && !pixel.isReturningToPool)
             {
-                PixelBlockController block = col.gameObject.GetComponent<PixelBlockController>();
-                if (block != null)
-                {
-                    block.HitArea(shredderCollider.bounds);
-                }
+                pixel.InstaDestroy();
             }
         }
     }

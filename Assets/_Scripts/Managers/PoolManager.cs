@@ -3,47 +3,101 @@ using System.Collections.Generic;
 
 public class PoolManager : MonoBehaviour
 {
-    public GameObject pixelPrefab;
-    public GameObject pixelPoolContainer;
+    public GameObject attachedPixelPrefab;
+    public GameObject detachedPixelPrefab;
+    public GameObject attachedPixelPoolContainer;
+    public GameObject detachedPixelPoolContainer;
     public int initialPoolSize = 100;
 
     public static PoolManager instance;
-    private List<GameObject> pixelPool;
+    private List<GameObject> attachedPixelPool;
+    private List<GameObject> detachedPixelPool;
     void Awake()
     {
         instance = this;
-        pixelPool = new List<GameObject>();
+        attachedPixelPool = new List<GameObject>();
+        detachedPixelPool = new List<GameObject>();
     }
     void Start()
     {
+        if (attachedPixelPrefab == null || attachedPixelPoolContainer == null)
+        {
+            Debug.LogError("PoolManager is missing attachedPixelPrefab or attachedPixelPoolContainer.");
+            return;
+        }
+
         for (int i = 0; i < initialPoolSize; i++)
         {
-            GameObject pixelObj = Instantiate(pixelPrefab, pixelPoolContainer.transform);
-            pixelObj.SetActive(false);
-            pixelPool.Add(pixelObj);
-        }   
+            GameObject attachedPixel = Instantiate(attachedPixelPrefab, attachedPixelPoolContainer.transform);
+            attachedPixel.SetActive(false);
+            attachedPixelPool.Add(attachedPixel);
+            GameObject detachedPixel = Instantiate(detachedPixelPrefab, detachedPixelPoolContainer.transform);
+            detachedPixel.SetActive(false);
+            detachedPixelPool.Add(detachedPixel);
+        }
     }
-    public GameObject GetFromPool()
+    public GameObject GetAttachedPixel()
     {
-        if (pixelPool.Count > 0)
+        foreach (GameObject pixel in attachedPixelPool)
         {
-            GameObject obj = pixelPool[pixelPool.Count - 1];
-            pixelPool.RemoveAt(pixelPool.Count - 1);
-            obj.SetActive(true);
-            return obj;
+            if (!pixel.activeInHierarchy)
+            {
+                pixel.SetActive(true);
+                return pixel;
+            }
+        }
+        GameObject newPixel = Instantiate(attachedPixelPrefab, attachedPixelPoolContainer.transform);
+        newPixel.SetActive(true);
+        attachedPixelPool.Add(newPixel);
+        return newPixel;
+    }
+    public GameObject GetDetachedPixel()
+    {
+        foreach (GameObject pixel in detachedPixelPool)
+        {
+            if (!pixel.activeInHierarchy)
+            {
+                pixel.SetActive(true);
+                return pixel;
+            }
+        }
+        GameObject newPixel = Instantiate(detachedPixelPrefab, detachedPixelPoolContainer.transform);
+        newPixel.SetActive(true);
+        detachedPixelPool.Add(newPixel);
+        return newPixel;
+    }
+    public void ReturnToPool(GameObject pixel, bool isAttached)
+    {
+        if (isAttached)
+        {
+            if (attachedPixelPool.Contains(pixel))
+            {
+                pixel.SetActive(false);
+                pixel.transform.position = attachedPixelPoolContainer.transform.position;
+                pixel.transform.rotation = Quaternion.identity;
+                pixel.transform.SetParent(attachedPixelPoolContainer.transform);
+            }
+            else
+            {
+                Debug.LogWarning("Returned attached pixel does not belong to the pool.");
+                Destroy(pixel);
+            }
         }
         else
         {
-            // Optionally, you can choose to instantiate a new object if the pool is empty
-            GameObject pixelObj = Instantiate(pixelPrefab);
-            return pixelObj;
+            if (detachedPixelPool.Contains(pixel))
+            {
+                pixel.SetActive(false);
+                pixel.transform.position = detachedPixelPoolContainer.transform.position;
+                pixel.transform.rotation = Quaternion.identity;
+                pixel.transform.SetParent(detachedPixelPoolContainer.transform);
+            }
+            else
+            {
+                Debug.LogWarning("Returned detached pixel does not belong to the pool.");
+                Destroy(pixel);
+            }
+
         }
-    }
-    public void ReturnToPool(GameObject obj)
-    {
-        obj.SetActive(false);
-        obj.transform.SetParent(pixelPoolContainer.transform);
-        obj.GetComponent<PixelController>()?.RevertState();
-        pixelPool.Add(obj);
     }
 }

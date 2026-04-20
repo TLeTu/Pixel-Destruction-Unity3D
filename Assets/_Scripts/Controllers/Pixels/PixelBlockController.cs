@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PixelBlockController : MonoBehaviour
 {
-    public GameObject pixelPrefab;
     public struct PixelTransferData
     {
         public int x;
@@ -123,11 +122,12 @@ public class PixelBlockController : MonoBehaviour
 
                 if (pixelColor.a > 0.1f)
                 {
-                    GameObject pixel = PoolManager.instance.GetFromPool();
-                    pixel.GetComponent<PixelController>()?.Attach();
+                    GameObject pixel = PoolManager.instance.GetAttachedPixel();
                     pixel.transform.SetParent(transform, false);
 
-                    pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY, 0);
+                    float z = UnityEngine.Random.Range(-0.5f, 0.5f);
+
+                    pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY, z);
 
                     Renderer rend = pixel.GetComponent<Renderer>();
                     if (rend != null)
@@ -270,6 +270,10 @@ public class PixelBlockController : MonoBehaviour
 
     private void TakeDamage(int x, int y)
     {
+        if(healthGrid[x, y] <= 0)
+        {
+            return;
+        }
         healthGrid[x, y] = 0;
         GameObject pixel = pixelObjects[x, y];
         if (pixel == null)
@@ -277,9 +281,26 @@ public class PixelBlockController : MonoBehaviour
             return;
         }
 
-        pixel.transform.SetParent(null);
+        Vector3 worldPos = pixel.transform.position;
 
-        pixel.GetComponent<PixelController>()?.Detach();
+        pixel.transform.SetParent(null);
+        PoolManager.instance.ReturnToPool(pixel, true);
+        pixelObjects[x, y] = null;
+
+
+        GameObject detachedPixel = PoolManager.instance.GetDetachedPixel();
+        detachedPixel.transform.position = worldPos;
+        // Transfer the pixel's color to the detached pixel but make it slightly darker to indicate it's detached
+        Renderer rend = pixel.GetComponent<Renderer>();
+        Renderer detachedRend = detachedPixel.GetComponent<Renderer>();
+        if (rend != null && detachedRend != null)        {
+            MaterialPropertyBlock propBlock = new MaterialPropertyBlock();
+            rend.GetPropertyBlock(propBlock);
+            Color originalColor = propBlock.GetColor("_BaseColor");
+            Color detachedColor = originalColor * 0.8f;
+            propBlock.SetColor("_BaseColor", detachedColor);
+            detachedRend.SetPropertyBlock(propBlock);
+        }
 
         activePixelCount--;
         CheckEmpty();
