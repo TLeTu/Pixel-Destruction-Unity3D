@@ -11,6 +11,7 @@ public class LevelConfig : ScriptableObject
     public List<BlockData> blocksToSpawn = new List<BlockData>(); 
 
     [Header("Tap damage radius")]
-    public int maxTapDamageRadius = 3;
+    public int damageRadius = 5;
+    public int maxTapDamage = 3;
     public int minTapDamage = 1;
 }

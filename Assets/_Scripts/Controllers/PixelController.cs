@@ -5,7 +5,6 @@ using UnityEngine;
 public class PixelController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private Collider2D col;
     public void SettupRigidbody()
     {
         if (rb == null)

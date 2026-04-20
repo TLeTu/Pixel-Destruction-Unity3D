@@ -54,7 +54,7 @@ public class LevelManager : MonoBehaviour
             }
             RegisterBlock(blockController);
             blockController.Initialize(blockData.width, blockData.height);
-            blockController.ConfigBlock(levelConfig.maxTapDamageRadius, levelConfig.minTapDamage);
+            blockController.ConfigBlock(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
         }
     }
     private void RegisterBlock(PixelBlockController block)
@@ -101,7 +101,7 @@ public class LevelManager : MonoBehaviour
 
         RegisterBlock(chunkBlock);
         chunkBlock.InitiateEmptyBlock(transferData.width, transferData.height);
-        chunkBlock.ConfigBlock(sourceBlock.maxDamageRadius, sourceBlock.minDamage);
+        chunkBlock.ConfigBlock(sourceBlock.damageRadius, sourceBlock.maxDamage, sourceBlock.minDamage);
 
         foreach (var pixelData in transferData.pixels)
         {

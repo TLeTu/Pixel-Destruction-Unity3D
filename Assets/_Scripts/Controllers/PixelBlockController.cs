@@ -6,7 +6,8 @@ using UnityEngine;
 public class PixelBlockController : MonoBehaviour
 {
     public GameObject pixelPrefab;
-    public int maxDamageRadius = 3;
+    public int damageRadius = 5;    
+    public int maxDamage = 3;
     public int minDamage = 1;
     private int width;
     private int height;
@@ -88,9 +89,10 @@ public class PixelBlockController : MonoBehaviour
         activePixelCount = 0;
     }
 
-    public void ConfigBlock(int maxDamageRadius, int minDamage)
+    public void ConfigBlock(int damageRadius, int maxDamage, int minDamage)
     {
-        this.maxDamageRadius = maxDamageRadius;
+        this.damageRadius = damageRadius;
+        this.maxDamage = maxDamage;
         this.minDamage = minDamage;
     }
 
@@ -119,17 +121,24 @@ public class PixelBlockController : MonoBehaviour
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
             Debug.Log($"Hit at local grid position: ({x}, {y})");
-            
-            CalculateDamageArea(x, y, out int startX, out int endX, out int startY, out int endY);
+            CalculateDamange(x, y, damageRadius, out int startX, out int endX, out int startY, out int endY);
             for (int i = startX; i <= endX; i++)
             {
-                for (int j = startY; j <= endY; j++)                {
-                    if (grid[i, j])
+                for (int j = startY; j <= endY; j++)
+                {
+                    if (i >= 0 && i < width && j >= 0 && j < height)
                     {
-                        TakeDamage(i, j);
+                        int distX = i - x;
+                        int distY = j - y;
+                        float distance = Mathf.Sqrt(distX * distX + distY * distY);
+                        if (distance <= damageRadius)
+                        {
+                            TakeDamage(i, j);
+                        }
                     }
                 }
             }
+
             CheckSplitChunks();
         }
     }
@@ -223,13 +232,12 @@ public class PixelBlockController : MonoBehaviour
         CheckEmpty();
     }
 
-    private void CalculateDamageArea(int hitX, int hitY, out int startX, out int endX, out int startY, out int endY)
+    private void CalculateDamange(int hitx, int hity, int damageRadius, out int startX, out int endX, out int startY, out int endY)
     {
-        //Later
-        startX = 0;
-        endX = 0;
-        startY = 0;
-        endY = 0;
+        startX = hitx - damageRadius;
+        endX = hitx + damageRadius;
+        startY = hity - damageRadius;
+        endY = hity + damageRadius;
     }
 
     private void CheckSplitChunks()
