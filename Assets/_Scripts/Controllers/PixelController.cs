@@ -5,13 +5,43 @@ using UnityEngine;
 public class PixelController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    public void SettupRigidbody()
+    private BoxCollider2D col;
+    public void Detach()
     {
+        col = GetComponent<BoxCollider2D>();
+        if (col != null)
+        {
+            col.compositeOperation = Collider2D.CompositeOperation.None;
+            col.size *= 0.8f;
+
+        }
+
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody2D>();
             rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
         }
+    }
+    public void Attach()
+    {
+        if (col != null)
+        {
+            col.compositeOperation = Collider2D.CompositeOperation.Merge;
+            col.size /= 0.8f;
+        }
+
+        if (rb != null)
+        {
+            Destroy(rb);
+            rb = null;
+        }
+    }
+    public void RevertState()
+    {
+        transform.localScale = Vector3.one;
+        // Reset the rotation to default
+        transform.localRotation = Quaternion.identity;
+        
     }
     public void InstaDestroy()
     {
@@ -32,6 +62,6 @@ public class PixelController : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        PoolManager.instance.ReturnToPool(gameObject);
     }
 }

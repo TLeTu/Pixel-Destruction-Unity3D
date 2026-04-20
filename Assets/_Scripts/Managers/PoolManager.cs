@@ -23,4 +23,27 @@ public class PoolManager : MonoBehaviour
             pixelPool.Add(pixelObj);
         }   
     }
+    public GameObject GetFromPool()
+    {
+        if (pixelPool.Count > 0)
+        {
+            GameObject obj = pixelPool[pixelPool.Count - 1];
+            pixelPool.RemoveAt(pixelPool.Count - 1);
+            obj.SetActive(true);
+            return obj;
+        }
+        else
+        {
+            // Optionally, you can choose to instantiate a new object if the pool is empty
+            GameObject pixelObj = Instantiate(pixelPrefab);
+            return pixelObj;
+        }
+    }
+    public void ReturnToPool(GameObject obj)
+    {
+        obj.SetActive(false);
+        obj.transform.SetParent(pixelPoolContainer.transform);
+        obj.GetComponent<PixelController>()?.RevertState();
+        pixelPool.Add(obj);
+    }
 }

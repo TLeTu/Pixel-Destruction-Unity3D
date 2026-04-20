@@ -68,7 +68,9 @@ public class PixelBlockController : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject pixel = Instantiate(pixelPrefab, transform);
+                GameObject pixel = PoolManager.instance.GetFromPool();
+                pixel.GetComponent<PixelController>()?.Attach();
+                pixel.transform.SetParent(transform, false);
                 // float z = UnityEngine.Random.Range(-0.5f, 0.5f);
                 pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY);
                 pixelObjects[x, y] = pixel;
@@ -212,24 +214,10 @@ public class PixelBlockController : MonoBehaviour
         {
             return;
         }
-        // Change the material color to red to indicate damage
-        Renderer rend = pixel.GetComponent<Renderer>();
-        if (rend != null)
-        {
-            rend.material.color = Color.red;
-        }
-
 
         pixel.transform.SetParent(null);
-        BoxCollider2D col = pixel.GetComponent<BoxCollider2D>();
-        if (col != null)
-        {
-            col.compositeOperation = Collider2D.CompositeOperation.None;
-            col.size *= 0.8f;
-
-        }
-
-        pixel.GetComponent<PixelController>()?.SettupRigidbody();
+        
+        pixel.GetComponent<PixelController>()?.Detach();
 
         activePixelCount--;
         CheckEmpty();
