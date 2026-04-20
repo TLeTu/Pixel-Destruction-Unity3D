@@ -6,7 +6,7 @@ using UnityEngine;
 public class PixelBlockController : MonoBehaviour
 {
     public GameObject pixelPrefab;
-    public int damageRadius = 5;    
+    public float damageRadius = 5;    
     public int maxDamage = 3;
     public int minDamage = 1;
     private int width;
@@ -89,7 +89,7 @@ public class PixelBlockController : MonoBehaviour
         activePixelCount = 0;
     }
 
-    public void ConfigBlock(int damageRadius, int maxDamage, int minDamage)
+    public void ConfigBlock(float damageRadius, int maxDamage, int minDamage)
     {
         this.damageRadius = damageRadius;
         this.maxDamage = maxDamage;
@@ -118,10 +118,12 @@ public class PixelBlockController : MonoBehaviour
         int x = Mathf.RoundToInt(localPoint.x + offsetX);
         int y = Mathf.RoundToInt(localPoint.y + offsetY);
 
+        float radiusSquared = damageRadius * damageRadius;
+
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
             Debug.Log($"Hit at local grid position: ({x}, {y})");
-            CalculateDamange(x, y, damageRadius, out int startX, out int endX, out int startY, out int endY);
+            CalculateTapArea(x, y, damageRadius, out int startX, out int endX, out int startY, out int endY);
             for (int i = startX; i <= endX; i++)
             {
                 for (int j = startY; j <= endY; j++)
@@ -130,8 +132,9 @@ public class PixelBlockController : MonoBehaviour
                     {
                         int distX = i - x;
                         int distY = j - y;
-                        float distance = Mathf.Sqrt(distX * distX + distY * distY);
-                        if (distance <= damageRadius)
+                        float sqrDistance = distX * distX + distY * distY;
+
+                        if (sqrDistance <= radiusSquared)
                         {
                             TakeDamage(i, j);
                         }
@@ -232,12 +235,12 @@ public class PixelBlockController : MonoBehaviour
         CheckEmpty();
     }
 
-    private void CalculateDamange(int hitx, int hity, int damageRadius, out int startX, out int endX, out int startY, out int endY)
+    private void CalculateTapArea(int hitx, int hity, float damageRadius, out int startX, out int endX, out int startY, out int endY)
     {
-        startX = hitx - damageRadius;
-        endX = hitx + damageRadius;
-        startY = hity - damageRadius;
-        endY = hity + damageRadius;
+        startX = hitx - Mathf.FloorToInt(damageRadius);
+        endX = hitx + Mathf.CeilToInt(damageRadius);
+        startY = hity - Mathf.FloorToInt(damageRadius);
+        endY = hity + Mathf.CeilToInt(damageRadius) ;
     }
 
     private void CheckSplitChunks()

@@ -786,6 +786,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &526437885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 526437886}
+  m_Layer: 0
+  m_Name: == Pools
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &526437886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526437885}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 316.4881, y: 807.4685, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &683071476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1115,7 +1146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 883741686}
   m_Layer: 0
-  m_Name: == Managers ==
+  m_Name: == Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2008,7 +2039,7 @@ GameObject:
   - component: {fileID: 2017575724}
   - component: {fileID: 2017575723}
   m_Layer: 5
-  m_Name: === Canvas ===
+  m_Name: == Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2158,3 +2189,4 @@ SceneRoots:
   - {fileID: 273027779}
   - {fileID: 883741686}
   - {fileID: 2017575726}
+  - {fileID: 526437886}
