@@ -5,21 +5,22 @@ public class PoolManager : MonoBehaviour
 {
     public GameObject pixelPrefab;
     public GameObject pixelPoolContainer;
+    public int initialPoolSize = 100;
 
+    public static PoolManager instance;
     private List<GameObject> pixelPool;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        instance = this;
         pixelPool = new List<GameObject>();
     }
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        for (int i = 0; i < initialPoolSize; i++)
+        {
+            GameObject pixelObj = Instantiate(pixelPrefab, pixelPoolContainer.transform);
+            pixelObj.SetActive(false);
+            pixelPool.Add(pixelObj);
+        }   
     }
 }
