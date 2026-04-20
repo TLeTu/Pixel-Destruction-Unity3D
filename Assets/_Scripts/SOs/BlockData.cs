@@ -4,7 +4,5 @@ using UnityEngine;
 public class BlockData : ScriptableObject
 {
     [Header("Block Settings")]
-    public int width = 10;
-    public int height = 10;
-    
+    public Sprite sprite;
 }

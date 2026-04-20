@@ -11,6 +11,9 @@ public class LevelManager : MonoBehaviour
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
+    private float damageRadius = 5f;
+    private int maxTapDamage = 3;
+    private int minTapDamage = 1;
     void Awake()
     {
         instance = this;
@@ -19,7 +22,13 @@ public class LevelManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameManager.instance.OnGameStarted += StartLevel;   
+        GameManager.instance.OnGameStarted += StartLevel;
+        if (levelConfig != null)
+        {
+            damageRadius = levelConfig.damageRadius;
+            maxTapDamage = levelConfig.maxTapDamage;
+            minTapDamage = levelConfig.minTapDamage;
+        }
     }
 
     // Update is called once per frame
@@ -35,6 +44,12 @@ public class LevelManager : MonoBehaviour
     private void StartLevel()
     {
         isSpawning = true;
+    }
+    public void GetLevelTapDamage(out float radius, out int maxDamage, out int minDamage)
+    {
+        radius = damageRadius;
+        maxDamage = maxTapDamage;
+        minDamage = minTapDamage;
     }
 
     private void SpawnBlock()
@@ -53,8 +68,8 @@ public class LevelManager : MonoBehaviour
                 return;
             }
             RegisterBlock(blockController);
-            blockController.Initialize(blockData.width, blockData.height);
-            blockController.ConfigBlock(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
+            blockController.ConfigBlock(blockData);
+            blockController.Initiate();
         }
     }
     private void RegisterBlock(PixelBlockController block)
@@ -101,7 +116,6 @@ public class LevelManager : MonoBehaviour
 
         RegisterBlock(chunkBlock);
         chunkBlock.InitiateEmptyBlock(transferData.width, transferData.height);
-        chunkBlock.ConfigBlock(sourceBlock.damageRadius, sourceBlock.maxDamage, sourceBlock.minDamage);
 
         foreach (var pixelData in transferData.pixels)
         {

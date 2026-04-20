@@ -39,9 +39,8 @@ public class PixelController : MonoBehaviour
     public void RevertState()
     {
         transform.localScale = Vector3.one;
-        // Reset the rotation to default
         transform.localRotation = Quaternion.identity;
-        
+
     }
     public void InstaDestroy()
     {
@@ -51,7 +50,7 @@ public class PixelController : MonoBehaviour
     private IEnumerator ShrinkAndDestroy()
     {
         Vector3 startScale = transform.localScale;
-        float duration = 0.5f;
+        float duration = 1f;
         float elapsed = 0f;
 
         while (elapsed < duration)

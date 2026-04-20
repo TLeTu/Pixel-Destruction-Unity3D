@@ -6,23 +6,6 @@ using UnityEngine;
 public class PixelBlockController : MonoBehaviour
 {
     public GameObject pixelPrefab;
-    public float damageRadius = 5;    
-    public int maxDamage = 3;
-    public int minDamage = 1;
-    private int width;
-    private int height;
-    private bool[,] grid;
-    private GameObject[,] pixelObjects;
-    private int activePixelCount = 0;
-
-    static readonly Vector2Int[] directions = new Vector2Int[]
-    {
-        new Vector2Int(0, 1),   // Up
-        new Vector2Int(0, -1),  // Down
-        new Vector2Int(-1, 0),  // Left
-        new Vector2Int(1, 0)    // Right
-    };
-
     public struct PixelTransferData
     {
         public int x;
@@ -52,33 +35,118 @@ public class PixelBlockController : MonoBehaviour
 
     public event Action<PixelBlockController, List<Vector2Int>> OnChunkCreated;
     public event Action<PixelBlockController> OnBlockDestroyed;
+    private Sprite sprite = null;
+    private int width = 5;
+    private int height = 5;
+    private int[,] healthGrid = null;
+    private GameObject[,] pixelObjects = null;
+    private int[,] visitedStamp = null;
+    private int visitToken = 0;
+    private readonly Queue<Vector2Int> floodFillQueue = new Queue<Vector2Int>();
+    private int activePixelCount = 0;
 
-    public void Initialize(int w, int h)
+    private static readonly Vector2Int[] directions = new Vector2Int[]
     {
-        width = w;
-        height = h;
+        new Vector2Int(0, 1),
+        new Vector2Int(0, -1),
+        new Vector2Int(-1, 0),
+        new Vector2Int(1, 0)
+    };
 
-        grid = new bool[width, height];
+    // public void Initialize(int w, int h)
+    // {
+    //     width = w;
+    //     height = h;
+
+    //     // grid = new bool[width, height];
+    //     healthGrid = new int[width, height];
+    //     pixelObjects = new GameObject[width, height];
+
+    //     float offsetX = (width - 1f) / 2f;
+    //     float offsetY = (height - 1f) / 2f;
+
+    //     for (int x = 0; x < width; x++)
+    //     {
+    //         for (int y = 0; y < height; y++)
+    //         {
+    //             GameObject pixel = PoolManager.instance.GetFromPool();
+    //             pixel.GetComponent<PixelController>()?.Attach();
+    //             pixel.transform.SetParent(transform, false);
+    //             // float z = UnityEngine.Random.Range(-0.5f, 0.5f);
+    //             pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY);
+    //             pixelObjects[x, y] = pixel;
+    //             // grid[x, y] = true;
+    //             healthGrid[x, y] = 100;
+    //         }
+    //     }
+
+    //     activePixelCount = width * height;
+    // }
+
+    public void ConfigBlock(BlockData data)
+    {
+        if (data == null)
+        {
+            Debug.LogError("BlockData is null. Cannot configure block.");
+            return;
+        }
+
+        sprite = data.sprite;
+    }
+
+    public void Initiate()
+    {
+        width = Mathf.RoundToInt(sprite.rect.width);
+        height = Mathf.RoundToInt(sprite.rect.height);
+
+        healthGrid = new int[width, height];
         pixelObjects = new GameObject[width, height];
+        visitedStamp = new int[width, height];
+        visitToken = 0;
+        activePixelCount = 0;
 
         float offsetX = (width - 1f) / 2f;
         float offsetY = (height - 1f) / 2f;
+
+        int startX = Mathf.RoundToInt(sprite.rect.x);
+        int startY = Mathf.RoundToInt(sprite.rect.y);
+
+        Texture2D tex = sprite.texture;
+
+        MaterialPropertyBlock propBlock = new MaterialPropertyBlock();
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject pixel = PoolManager.instance.GetFromPool();
-                pixel.GetComponent<PixelController>()?.Attach();
-                pixel.transform.SetParent(transform, false);
-                // float z = UnityEngine.Random.Range(-0.5f, 0.5f);
-                pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY);
-                pixelObjects[x, y] = pixel;
-                grid[x, y] = true;
+                Color pixelColor = tex.GetPixel(startX + x, startY + y);
+
+                if (pixelColor.a > 0.1f)
+                {
+                    GameObject pixel = PoolManager.instance.GetFromPool();
+                    pixel.GetComponent<PixelController>()?.Attach();
+                    pixel.transform.SetParent(transform, false);
+
+                    pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY, 0);
+
+                    Renderer rend = pixel.GetComponent<Renderer>();
+                    if (rend != null)
+                    {
+                        propBlock.SetColor("_BaseColor", pixelColor);
+                        rend.SetPropertyBlock(propBlock);
+                    }
+
+                    pixelObjects[x, y] = pixel;
+                    healthGrid[x, y] = 100;
+                    activePixelCount++;
+                }
+                else
+                {
+                    healthGrid[x, y] = 0;
+                    pixelObjects[x, y] = null;
+                }
             }
         }
-
-        activePixelCount = width * height;
     }
 
     public void InitiateEmptyBlock(int w, int h)
@@ -86,21 +154,16 @@ public class PixelBlockController : MonoBehaviour
         width = w;
         height = h;
 
-        grid = new bool[width, height];
+        // grid = new bool[width, height];
+        healthGrid = new int[width, height];
         pixelObjects = new GameObject[width, height];
+        visitedStamp = new int[width, height];
+        visitToken = 0;
         activePixelCount = 0;
     }
-
-    public void ConfigBlock(float damageRadius, int maxDamage, int minDamage)
-    {
-        this.damageRadius = damageRadius;
-        this.maxDamage = maxDamage;
-        this.minDamage = minDamage;
-    }
-
     public void AddPixel(int x, int y, GameObject pixel)
     {
-        grid[x, y] = true;
+        healthGrid[x, y] = 100;
         activePixelCount++;
         pixelObjects[x, y] = pixel;
 
@@ -111,7 +174,7 @@ public class PixelBlockController : MonoBehaviour
         pixel.transform.localPosition = new Vector2(x - offsetX, y - offsetY);
     }
 
-    public void HitAtPoint(Vector2 worldHitPoint)
+    public void HitAtPoint(Vector2 worldHitPoint, float damageRadius, int maxDamage, int minDamage)
     {
         Vector2 localPoint = transform.InverseTransformPoint(worldHitPoint);
         float offsetX = (width - 1f) / 2f;
@@ -124,7 +187,6 @@ public class PixelBlockController : MonoBehaviour
 
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
-            Debug.Log($"Hit at local grid position: ({x}, {y})");
             CalculateTapArea(x, y, damageRadius, out int startX, out int endX, out int startY, out int endY);
             for (int i = startX; i <= endX; i++)
             {
@@ -148,14 +210,14 @@ public class PixelBlockController : MonoBehaviour
         }
     }
 
-    public void HitArea(Bounds shredderBounds)
+    public void HitArea(Bounds damageBounds)
     {
         Vector2[] worldCorners = new Vector2[4]
         {
-        new Vector2(shredderBounds.min.x, shredderBounds.min.y),
-        new Vector2(shredderBounds.min.x, shredderBounds.max.y),
-        new Vector2(shredderBounds.max.x, shredderBounds.min.y),
-        new Vector2(shredderBounds.max.x, shredderBounds.max.y)
+        new Vector2(damageBounds.min.x, damageBounds.min.y),
+        new Vector2(damageBounds.min.x, damageBounds.max.y),
+        new Vector2(damageBounds.max.x, damageBounds.min.y),
+        new Vector2(damageBounds.max.x, damageBounds.max.y)
         };
 
         float minLocalX = float.PositiveInfinity;
@@ -196,8 +258,8 @@ public class PixelBlockController : MonoBehaviour
         {
             for (int y = startY; y <= endY; y++)
             {
-                if (!grid[x, y]) continue;
-                if (shredderBounds.Contains(transform.TransformPoint(new Vector2(x - offsetX, y - offsetY))))
+                if (healthGrid[x, y] <= 0) continue;
+                if (damageBounds.Contains(transform.TransformPoint(new Vector2(x - offsetX, y - offsetY))))
                 {
                     TakeDamage(x, y);
                 }
@@ -208,7 +270,7 @@ public class PixelBlockController : MonoBehaviour
 
     private void TakeDamage(int x, int y)
     {
-        grid[x, y] = false;
+        healthGrid[x, y] = 0;
         GameObject pixel = pixelObjects[x, y];
         if (pixel == null)
         {
@@ -216,7 +278,7 @@ public class PixelBlockController : MonoBehaviour
         }
 
         pixel.transform.SetParent(null);
-        
+
         pixel.GetComponent<PixelController>()?.Detach();
 
         activePixelCount--;
@@ -228,22 +290,23 @@ public class PixelBlockController : MonoBehaviour
         startX = hitx - Mathf.FloorToInt(damageRadius);
         endX = hitx + Mathf.CeilToInt(damageRadius);
         startY = hity - Mathf.FloorToInt(damageRadius);
-        endY = hity + Mathf.CeilToInt(damageRadius) ;
+        endY = hity + Mathf.CeilToInt(damageRadius);
     }
 
     private void CheckSplitChunks()
     {
-        bool[,] visited = new bool[width, height];
+        EnsureVisitedStampBuffer();
+        int currentVisitToken = BeginVisitPass();
         List<List<Vector2Int>> chunks = new List<List<Vector2Int>>();
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                if (grid[x, y] && !visited[x, y])
+                if (healthGrid[x, y] > 0 && visitedStamp[x, y] != currentVisitToken)
                 {
                     List<Vector2Int> chunk = new List<Vector2Int>();
-                    FloodFill(x, y, visited, chunk);
+                    FloodFill(x, y, currentVisitToken, chunk);
                     chunks.Add(chunk);
                 }
             }
@@ -253,7 +316,6 @@ public class PixelBlockController : MonoBehaviour
             chunks.Sort((a, b) => b.Count.CompareTo(a.Count));
             for (int i = 1; i < chunks.Count; i++)
             {
-                Debug.Log($"Requesting chunk spawn with {chunks[i].Count} pixels");
                 OnChunkCreated?.Invoke(this, chunks[i]);
                 activePixelCount -= chunks[i].Count;
             }
@@ -298,27 +360,49 @@ public class PixelBlockController : MonoBehaviour
                 int newY = pos.y - minY;
                 chunkData.pixels.Add(new PixelTransferData(newX, newY, pixel));
                 pixelObjects[pos.x, pos.y] = null;
-                grid[pos.x, pos.y] = false;
+                healthGrid[pos.x, pos.y] = 0;
             }
         }
 
         return chunkData;
     }
 
-    private void FloodFill(int x, int y, bool[,] visited, List<Vector2Int> chunk)
+    private int BeginVisitPass()
+    {
+        if (visitToken == int.MaxValue)
+        {
+            Array.Clear(visitedStamp, 0, visitedStamp.Length);
+            visitToken = 1;
+            return visitToken;
+        }
+
+        visitToken++;
+        return visitToken;
+    }
+
+    private void EnsureVisitedStampBuffer()
+    {
+        if (visitedStamp == null || visitedStamp.GetLength(0) != width || visitedStamp.GetLength(1) != height)
+        {
+            visitedStamp = new int[width, height];
+            visitToken = 0;
+        }
+    }
+
+    private void FloodFill(int x, int y, int currentVisitToken, List<Vector2Int> chunk)
     {
         if (x < 0 || x >= width || y < 0 || y >= height) return;
-        if (visited[x, y] || !grid[x, y]) return;
+        if (visitedStamp[x, y] == currentVisitToken || healthGrid[x, y] <= 0) return;
 
-        visited[x, y] = true;
+        visitedStamp[x, y] = currentVisitToken;
 
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-        queue.Enqueue(new Vector2Int(x, y));
+        floodFillQueue.Clear();
+        floodFillQueue.Enqueue(new Vector2Int(x, y));
 
 
-        while (queue.Count > 0)
+        while (floodFillQueue.Count > 0)
         {
-            Vector2Int current = queue.Dequeue();
+            Vector2Int current = floodFillQueue.Dequeue();
 
             chunk.Add(new Vector2Int(current.x, current.y));
 
@@ -327,10 +411,10 @@ public class PixelBlockController : MonoBehaviour
                 int nx = current.x + dir.x;
                 int ny = current.y + dir.y;
 
-                if (nx >= 0 && nx < width && ny >= 0 && ny < height && !visited[nx, ny] && grid[nx, ny])
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height && visitedStamp[nx, ny] != currentVisitToken && healthGrid[nx, ny] > 0)
                 {
-                    visited[nx, ny] = true;
-                    queue.Enqueue(new Vector2Int(nx, ny));
+                    visitedStamp[nx, ny] = currentVisitToken;
+                    floodFillQueue.Enqueue(new Vector2Int(nx, ny));
                 }
             }
         }

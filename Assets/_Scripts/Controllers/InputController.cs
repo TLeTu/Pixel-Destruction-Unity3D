@@ -5,10 +5,14 @@ using UnityEngine.InputSystem;
 public class InputController : MonoBehaviour
 {
     private Camera mainCam;
+    private float damageRadius = 5f;
+    private int maxTapDamage = 3;
+    private int minTapDamage = 1;
 
     void Start()
     {
         mainCam = Camera.main;
+        LevelManager.instance.GetLevelTapDamage(out damageRadius, out maxTapDamage, out minTapDamage);
         GameManager.instance.OnGameStarted += EnableInput;
         GameManager.instance.OnGameResumed += EnableInput;
         GameManager.instance.OnMainMenu += DisableInput;
@@ -35,18 +39,16 @@ public class InputController : MonoBehaviour
 
         if (isTapped)
         {
-            Debug.Log($"Tapped at screen position: {screenPosition}");
             Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPosition);
             
             Collider2D hitCollider = Physics2D.OverlapPoint(worldPos);
 
             if (hitCollider != null)
             {
-                Debug.Log($"Hit object: {hitCollider.gameObject.name}");
                 PixelBlockController block = hitCollider.GetComponent<PixelBlockController>();
                 if (block != null)
                 {
-                    block.HitAtPoint(worldPos);
+                    block.HitAtPoint(worldPos, damageRadius, maxTapDamage, minTapDamage);
                 }
             }
         }

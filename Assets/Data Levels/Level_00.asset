@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
   targetDestroyCount: 50
   blocksToSpawn:
-  - {fileID: 11400000, guid: 094341b0ddfa0db6d9e6819bfc252db8, type: 2}
-  - {fileID: 11400000, guid: ddf1e15ebbe2c545894bcd16bab5dfc9, type: 2}
+  - {fileID: 11400000, guid: 7ea936062ea2030aa9c1909775aa3610, type: 2}
+  damageRadius: 5
+  maxTapDamage: 3
+  minTapDamage: 1
