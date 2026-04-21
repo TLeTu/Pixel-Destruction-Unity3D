@@ -185,15 +185,18 @@ public class PixelBlockController : MonoBehaviour
         CheckSplitChunks();
 
     }
-
-    public void HitArea(Bounds damageBounds)
+    public void HitArea(Collider2D weaponCollider)
     {
+        if (weaponCollider == null) return;
+
+        Bounds damageBounds = weaponCollider.bounds;
+
         Vector2[] worldCorners = new Vector2[4]
         {
-        new Vector2(damageBounds.min.x, damageBounds.min.y),
-        new Vector2(damageBounds.min.x, damageBounds.max.y),
-        new Vector2(damageBounds.max.x, damageBounds.min.y),
-        new Vector2(damageBounds.max.x, damageBounds.max.y)
+            new Vector2(damageBounds.min.x, damageBounds.min.y),
+            new Vector2(damageBounds.min.x, damageBounds.max.y),
+            new Vector2(damageBounds.max.x, damageBounds.min.y),
+            new Vector2(damageBounds.max.x, damageBounds.max.y)
         };
 
         float minLocalX = float.PositiveInfinity;
@@ -229,15 +232,17 @@ public class PixelBlockController : MonoBehaviour
             return;
         }
 
-
         for (int x = startX; x <= endX; x++)
         {
             for (int y = startY; y <= endY; y++)
             {
-                // if (healthGrid[x, y] <= 0) continue;
-                if (damageBounds.Contains(transform.TransformPoint(new Vector2(x - offsetX, y - offsetY))))
+                if (healthGrid[x, y] <= 0) continue;
+
+                Vector2 worldPos = transform.TransformPoint(new Vector2(x - offsetX, y - offsetY));
+
+                if (weaponCollider.OverlapPoint(worldPos))
                 {
-                    TakeDamage(x, y, 100);
+                    TakeDamage(x, y, 1000f);
                 }
             }
         }
@@ -272,7 +277,8 @@ public class PixelBlockController : MonoBehaviour
         // Transfer the pixel's color to the detached pixel but make it slightly darker to indicate it's detached
         Renderer rend = pixel.GetComponent<Renderer>();
         Renderer detachedRend = detachedPixel.GetComponent<Renderer>();
-        if (rend != null && detachedRend != null)        {
+        if (rend != null && detachedRend != null)
+        {
             MaterialPropertyBlock propBlock = new MaterialPropertyBlock();
             rend.GetPropertyBlock(propBlock);
             Color originalColor = propBlock.GetColor("_BaseColor");

@@ -26,7 +26,7 @@ public class ShredderController : MonoBehaviour
             PixelBlockController block = col.GetComponent<PixelBlockController>();
             if (block != null)
             {
-                block.HitArea(shredderCollider.bounds);
+                block.HitArea(shredderCollider);
                 continue;
             }
 
