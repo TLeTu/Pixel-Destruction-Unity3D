@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class ShredderController : MonoBehaviour
 {
+    [SerializeField]
+    private float damage = 1000f;
+
     private Collider2D shredderCollider;
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
@@ -26,7 +29,7 @@ public class ShredderController : MonoBehaviour
             PixelBlockController block = col.GetComponent<PixelBlockController>();
             if (block != null)
             {
-                block.HitArea(shredderCollider);
+                block.HitArea(shredderCollider, damage);
                 continue;
             }
 

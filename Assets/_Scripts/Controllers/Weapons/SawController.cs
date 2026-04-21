@@ -1,30 +1,39 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class SawController : MonoBehaviour, IWeaponController
+public class SawController : MonoBehaviour,IWeaponController
 {
-    public float damage = 10f;
-    public float range = 1f;
-    public LayerMask targetLayer;
-
-    private void Update()
+    [SerializeField]
+    private float damage = 10f;
+    private Collider2D sawCollider;
+    private ContactFilter2D contactFilter;
+    private List<Collider2D> overlapResults = new List<Collider2D>();
+    void Start()
     {
-        DetectTargets();
-    }
+        sawCollider = GetComponent<Collider2D>();
 
+        contactFilter = ContactFilter2D.noFilter;
+        contactFilter.useTriggers = true;
+    }
+    void FixedUpdate()
+    {
+            DetectTargets();
+    }
     public void DetectTargets()
     {
-        Collider2D[] hitTargets = Physics2D.OverlapCircleAll(transform.position, range, targetLayer);
-        foreach (Collider2D target in hitTargets)
-        {
-            // Apply damage to the target
-            Debug.Log("Hit target: " + target.name);
-            // Here you would typically call a method on the target to apply damage
-        }
-    }
+        overlapResults.Clear();
+        int overlapCount = sawCollider.Overlap(contactFilter, overlapResults);
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
+        for (int i = 0; i < overlapCount; i++)
+        {
+            Collider2D col = overlapResults[i];
+
+            PixelBlockController block = col.GetComponent<PixelBlockController>();
+            if (block != null)
+            {
+                block.HitArea(sawCollider, damage);
+                continue;
+            }
+        }
     }
 }

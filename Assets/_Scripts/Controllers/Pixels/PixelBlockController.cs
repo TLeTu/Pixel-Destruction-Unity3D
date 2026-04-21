@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PixelBlockController : MonoBehaviour
@@ -185,7 +184,7 @@ public class PixelBlockController : MonoBehaviour
         CheckSplitChunks();
 
     }
-    public void HitArea(Collider2D weaponCollider)
+    public void HitArea(Collider2D weaponCollider, float damage)
     {
         if (weaponCollider == null) return;
 
@@ -242,7 +241,7 @@ public class PixelBlockController : MonoBehaviour
 
                 if (weaponCollider.OverlapPoint(worldPos))
                 {
-                    TakeDamage(x, y, 1000f);
+                    TakeDamage(x, y, damage);
                 }
             }
         }
