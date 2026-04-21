@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
+    private int blockSpawned = 0;
     void Awake()
     {
         instance = this;
@@ -24,22 +25,22 @@ public class LevelManager : MonoBehaviour
             InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
         }
 
-        // Spawn 1 block
-        if (levelConfig != null && levelConfig.blocksToSpawn.Count > 0)
-        {
-            BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
-            GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
-            PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();
-            if (blockController == null)
-            {
-                Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
-                Destroy(blockObj);
-                return;
-            }
-            RegisterBlock(blockController);
-            blockController.ConfigBlock(blockData);
-            blockController.Initiate();
-        }
+        // // Spawn 1 block
+        // if (levelConfig != null && levelConfig.blocksToSpawn.Count > 0)
+        // {
+        //     BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
+        //     GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
+        //     PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();
+        //     if (blockController == null)
+        //     {
+        //         Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
+        //         Destroy(blockObj);
+        //         return;
+        //     }
+        //     RegisterBlock(blockController);
+        //     blockController.ConfigBlock(blockData);
+        //     blockController.Initiate();
+        // }
     }
 
     void Update()
@@ -47,13 +48,24 @@ public class LevelManager : MonoBehaviour
         // Call spawn block every spawnTime seconds
         if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false)
         {
+            if(blockSpawned >= levelConfig.targetDestroyCount && registeredBlocks.Count == 0)
+            {
+                Debug.Log("Level Completed!");
+
+            }
             return;
         }
-        // SpawnBlock();
+        SpawnBlock();
+        if (blockSpawned >= levelConfig.targetDestroyCount)
+        {
+            isSpawning = false;
+            Debug.Log("Reached target destroy count: " + levelConfig.targetDestroyCount);
+        }
     }
     private void StartLevel()
     {
         isSpawning = true;
+        blockSpawned = 0;
     }
     private void SpawnBlock()
     {
@@ -61,6 +73,7 @@ public class LevelManager : MonoBehaviour
         if (spawnTimer >= spawnTime)
         {
             spawnTimer = 0f;
+            blockSpawned++;
             BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
             GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
             PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();

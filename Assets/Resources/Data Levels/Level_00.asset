@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c52e9905bf3456619e11e56432f7be1, type: 3}
   m_Name: Level_00
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  targetDestroyCount: 50
+  targetDestroyCount: 10
   blocksToSpawn:
   - {fileID: 11400000, guid: 7ea936062ea2030aa9c1909775aa3610, type: 2}
-  damageRadius: 5
+  damageRadius: 2
   maxTapDamage: 100
-  minTapDamage: 50
+  minTapDamage: 100

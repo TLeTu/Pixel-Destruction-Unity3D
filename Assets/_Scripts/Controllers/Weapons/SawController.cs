@@ -1,13 +1,17 @@
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class SawController : MonoBehaviour,IWeaponController
 {
     [SerializeField]
     private float damage = 10f;
+    [SerializeField]
+    private float damageTickRate = 0.1f;
     private Collider2D sawCollider;
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
+    private float damageTimer = 0f;
     void Start()
     {
         sawCollider = GetComponent<Collider2D>();
@@ -17,7 +21,12 @@ public class SawController : MonoBehaviour,IWeaponController
     }
     void FixedUpdate()
     {
+        damageTimer += Time.fixedDeltaTime;
+        if (damageTimer >= damageTickRate)
+        {
             DetectTargets();
+            damageTimer = 0f;
+        }
     }
     public void DetectTargets()
     {

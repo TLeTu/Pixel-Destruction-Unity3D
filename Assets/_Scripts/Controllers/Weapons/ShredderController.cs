@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class ShredderController : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class ShredderController : MonoBehaviour
             if (pixel != null && !pixel.isReturningToPool)
             {
                 pixel.InstaDestroy();
+                ScoreManager.instance.UpdateScore(1);
             }
         }
     }

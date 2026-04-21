@@ -9,9 +9,10 @@ public class ScoreManager : MonoBehaviour
     {
         instance = this;
     }
-    private void UpdateScore(int points)
+    public void UpdateScore(int points)
     {
         currentScore += points;
+        Debug.Log("Score updated: " + currentScore);
         CheckForThresholds();
 
     }
