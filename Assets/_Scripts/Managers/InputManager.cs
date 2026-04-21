@@ -2,17 +2,21 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem; 
 
-public class InputController : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
+    public static InputManager instance;
     private Camera mainCam;
     private float damageRadius = 5f;
     private int maxTapDamage = 3;
     private int minTapDamage = 1;
 
+    void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         mainCam = Camera.main;
-        LevelManager.instance.GetLevelTapDamage(out damageRadius, out maxTapDamage, out minTapDamage);
         GameManager.instance.OnGameStarted += EnableInput;
         GameManager.instance.OnGameResumed += EnableInput;
         GameManager.instance.OnMainMenu += DisableInput;
@@ -52,6 +56,12 @@ public class InputController : MonoBehaviour
                 }
             }
         }
+    }
+    public void SetTapDamage(float radius, int maxDamage, int minDamage)
+    {
+        damageRadius = radius;
+        maxTapDamage = maxDamage;
+        minTapDamage = minDamage;
     }
     private void EnableInput()
     {

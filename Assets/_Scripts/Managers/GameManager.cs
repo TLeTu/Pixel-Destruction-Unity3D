@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -11,21 +13,39 @@ public class GameManager : MonoBehaviour
     public event Action OnGamePaused;
     public event Action OnGameResumed;
     public event Action OnGameWin;
+    [SerializeField] private string levelFolder = "Data Levels";
+    private List<LevelConfig> levelConfigs = new List<LevelConfig>();
+    public IReadOnlyList<LevelConfig> LevelConfigs => levelConfigs;
     void Awake()
     {
         instance = this;
+        LoadLevelConfigs();
     }
     void Start()
     {
         SetGameState(GameState.MainMenu);
     }
-
-    // Update is called once per frame
-    void Update()
+    private void LoadLevelConfigs()
     {
-        
-    }
+        levelConfigs = Resources.LoadAll<LevelConfig>(levelFolder)
+            .OrderBy(x => x.name)
+            .ToList();
 
+        if (levelConfigs.Count == 0)
+        {
+            Debug.LogWarning("No LevelConfig found in Resources/" + levelFolder);
+        }
+    }
+    private void LoadLevel(int levelIndex)
+    {
+        if (levelIndex < 0 || levelIndex >= levelConfigs.Count)
+        {
+            Debug.LogError("Invalid level index: " + levelIndex);
+            return;
+        }
+        LevelConfig config = levelConfigs[levelIndex];
+        LevelManager.instance.levelConfig = config;
+    }
     public void SetGameState(GameState newState)
     {
         GameState currentState = gameState;

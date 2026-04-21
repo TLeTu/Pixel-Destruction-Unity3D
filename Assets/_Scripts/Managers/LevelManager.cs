@@ -11,27 +11,37 @@ public class LevelManager : MonoBehaviour
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
-    private float damageRadius = 5f;
-    private int maxTapDamage = 3;
-    private int minTapDamage = 1;
     void Awake()
     {
         instance = this;
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         GameManager.instance.OnGameStarted += StartLevel;
         if (levelConfig != null)
         {
-            damageRadius = levelConfig.damageRadius;
-            maxTapDamage = levelConfig.maxTapDamage;
-            minTapDamage = levelConfig.minTapDamage;
+            InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
+        }
+
+        // Spawn 1 block
+        if (levelConfig != null && levelConfig.blocksToSpawn.Count > 0)
+        {
+            BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
+            GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
+            PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();
+            if (blockController == null)
+            {
+                Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
+                Destroy(blockObj);
+                return;
+            }
+            RegisterBlock(blockController);
+            blockController.ConfigBlock(blockData);
+            blockController.Initiate();
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         // Call spawn block every spawnTime seconds
@@ -39,19 +49,12 @@ public class LevelManager : MonoBehaviour
         {
             return;
         }
-        SpawnBlock();
+        // SpawnBlock();
     }
     private void StartLevel()
     {
         isSpawning = true;
     }
-    public void GetLevelTapDamage(out float radius, out int maxDamage, out int minDamage)
-    {
-        radius = damageRadius;
-        maxDamage = maxTapDamage;
-        minDamage = minTapDamage;
-    }
-
     private void SpawnBlock()
     {
         spawnTimer += Time.deltaTime;
@@ -119,7 +122,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (var pixelData in transferData.pixels)
         {
-            chunkBlock.AddPixel(pixelData.x, pixelData.y, pixelData.pixel);
+            chunkBlock.AddPixel(pixelData.x, pixelData.y, pixelData.health, pixelData.pixel);
         }
     }
 

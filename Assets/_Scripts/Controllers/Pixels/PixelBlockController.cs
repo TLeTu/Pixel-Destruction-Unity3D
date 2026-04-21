@@ -9,12 +9,14 @@ public class PixelBlockController : MonoBehaviour
     {
         public int x;
         public int y;
+        public float health;
         public GameObject pixel;
 
-        public PixelTransferData(int x, int y, GameObject pixel)
+        public PixelTransferData(int x, int y, float health, GameObject pixel)
         {
             this.x = x;
             this.y = y;
+            this.health = health;
             this.pixel = pixel;
         }
     }
@@ -37,12 +39,13 @@ public class PixelBlockController : MonoBehaviour
     private Sprite sprite = null;
     private int width = 5;
     private int height = 5;
-    private int[,] healthGrid = null;
+    private float[,] healthGrid = null;
     private GameObject[,] pixelObjects = null;
     private int[,] visitedStamp = null;
     private int visitToken = 0;
     private readonly Queue<Vector2Int> floodFillQueue = new Queue<Vector2Int>();
     private int activePixelCount = 0;
+    private float initalPixelHealth = 100f;
 
     private static readonly Vector2Int[] directions = new Vector2Int[]
     {
@@ -51,36 +54,6 @@ public class PixelBlockController : MonoBehaviour
         new Vector2Int(-1, 0),
         new Vector2Int(1, 0)
     };
-
-    // public void Initialize(int w, int h)
-    // {
-    //     width = w;
-    //     height = h;
-
-    //     // grid = new bool[width, height];
-    //     healthGrid = new int[width, height];
-    //     pixelObjects = new GameObject[width, height];
-
-    //     float offsetX = (width - 1f) / 2f;
-    //     float offsetY = (height - 1f) / 2f;
-
-    //     for (int x = 0; x < width; x++)
-    //     {
-    //         for (int y = 0; y < height; y++)
-    //         {
-    //             GameObject pixel = PoolManager.instance.GetFromPool();
-    //             pixel.GetComponent<PixelController>()?.Attach();
-    //             pixel.transform.SetParent(transform, false);
-    //             // float z = UnityEngine.Random.Range(-0.5f, 0.5f);
-    //             pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY);
-    //             pixelObjects[x, y] = pixel;
-    //             // grid[x, y] = true;
-    //             healthGrid[x, y] = 100;
-    //         }
-    //     }
-
-    //     activePixelCount = width * height;
-    // }
 
     public void ConfigBlock(BlockData data)
     {
@@ -91,6 +64,7 @@ public class PixelBlockController : MonoBehaviour
         }
 
         sprite = data.sprite;
+        initalPixelHealth = data.pixelHealth;
     }
 
     public void Initiate()
@@ -98,7 +72,7 @@ public class PixelBlockController : MonoBehaviour
         width = Mathf.RoundToInt(sprite.rect.width);
         height = Mathf.RoundToInt(sprite.rect.height);
 
-        healthGrid = new int[width, height];
+        healthGrid = new float[width, height];
         pixelObjects = new GameObject[width, height];
         visitedStamp = new int[width, height];
         visitToken = 0;
@@ -125,9 +99,9 @@ public class PixelBlockController : MonoBehaviour
                     GameObject pixel = PoolManager.instance.GetAttachedPixel();
                     pixel.transform.SetParent(transform, false);
 
-                    float z = UnityEngine.Random.Range(-0.5f, 0.5f);
+                    // float z = UnityEngine.Random.Range(-0.5f, 0.5f);
 
-                    pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY, z);
+                    pixel.transform.localPosition = new Vector3(x - offsetX, y - offsetY);
 
                     Renderer rend = pixel.GetComponent<Renderer>();
                     if (rend != null)
@@ -137,7 +111,7 @@ public class PixelBlockController : MonoBehaviour
                     }
 
                     pixelObjects[x, y] = pixel;
-                    healthGrid[x, y] = 100;
+                    healthGrid[x, y] = initalPixelHealth;
                     activePixelCount++;
                 }
                 else
@@ -155,15 +129,15 @@ public class PixelBlockController : MonoBehaviour
         height = h;
 
         // grid = new bool[width, height];
-        healthGrid = new int[width, height];
+        healthGrid = new float[width, height];
         pixelObjects = new GameObject[width, height];
         visitedStamp = new int[width, height];
         visitToken = 0;
         activePixelCount = 0;
     }
-    public void AddPixel(int x, int y, GameObject pixel)
+    public void AddPixel(int x, int y, float health, GameObject pixel)
     {
-        healthGrid[x, y] = 100;
+        healthGrid[x, y] = health;
         activePixelCount++;
         pixelObjects[x, y] = pixel;
 
@@ -197,17 +171,19 @@ public class PixelBlockController : MonoBehaviour
                         int distX = i - x;
                         int distY = j - y;
                         float sqrDistance = distX * distX + distY * distY;
+                        float damage = Mathf.Lerp(maxDamage, minDamage, Mathf.Sqrt(sqrDistance) / damageRadius);
 
                         if (sqrDistance <= radiusSquared)
                         {
-                            TakeDamage(i, j);
+                            TakeDamage(i, j, damage);
                         }
                     }
                 }
             }
 
-            CheckSplitChunks();
         }
+        CheckSplitChunks();
+
     }
 
     public void HitArea(Bounds damageBounds)
@@ -258,23 +234,27 @@ public class PixelBlockController : MonoBehaviour
         {
             for (int y = startY; y <= endY; y++)
             {
-                if (healthGrid[x, y] <= 0) continue;
+                // if (healthGrid[x, y] <= 0) continue;
                 if (damageBounds.Contains(transform.TransformPoint(new Vector2(x - offsetX, y - offsetY))))
                 {
-                    TakeDamage(x, y);
+                    TakeDamage(x, y, 100);
                 }
             }
         }
         CheckSplitChunks();
     }
 
-    private void TakeDamage(int x, int y)
+    private void TakeDamage(int x, int y, float damage)
     {
-        if(healthGrid[x, y] <= 0)
+        if (healthGrid[x, y] > 0)
         {
-            return;
+            healthGrid[x, y] = Mathf.Max(healthGrid[x, y] - damage, 0);
+            if (healthGrid[x, y] > 0)
+            {
+                return;
+            }
         }
-        healthGrid[x, y] = 0;
+
         GameObject pixel = pixelObjects[x, y];
         if (pixel == null)
         {
@@ -284,7 +264,6 @@ public class PixelBlockController : MonoBehaviour
         Vector3 worldPos = pixel.transform.position;
 
         pixel.transform.SetParent(null);
-        PoolManager.instance.ReturnToPool(pixel, true);
         pixelObjects[x, y] = null;
 
 
@@ -301,6 +280,9 @@ public class PixelBlockController : MonoBehaviour
             propBlock.SetColor("_BaseColor", detachedColor);
             detachedRend.SetPropertyBlock(propBlock);
         }
+
+        PoolManager.instance.ReturnToPool(pixel, true);
+
 
         activePixelCount--;
         CheckEmpty();
@@ -379,7 +361,7 @@ public class PixelBlockController : MonoBehaviour
             {
                 int newX = pos.x - minX;
                 int newY = pos.y - minY;
-                chunkData.pixels.Add(new PixelTransferData(newX, newY, pixel));
+                chunkData.pixels.Add(new PixelTransferData(newX, newY, healthGrid[pos.x, pos.y], pixel));
                 pixelObjects[pos.x, pos.y] = null;
                 healthGrid[pos.x, pos.y] = 0;
             }

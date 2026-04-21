@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: CropBlock
   m_EditorClassIdentifier: Assembly-CSharp::BlockData
   sprite: {fileID: 21300000, guid: ce0f351f56cc62b93ba950bdfd39faf9, type: 3}
+  pixelHealth: 100

@@ -5,4 +5,5 @@ public class BlockData : ScriptableObject
 {
     [Header("Block Settings")]
     public Sprite sprite;
+    public float pixelHealth;
 }
