@@ -289,6 +289,8 @@ public class PixelBlockController : MonoBehaviour
             pixelRb.linearVelocity = pixelBlockRb.linearVelocity;
             pixelRb.angularVelocity = pixelBlockRb.angularVelocity;
         }
+        float randomX = UnityEngine.Random.Range(-3f, 3f);
+        pixelRb.AddForce(new Vector2(randomX, 0), ForceMode2D.Impulse);
         detachedPixel.transform.position = worldPos;
         Renderer rend = pixel.GetComponent<Renderer>();
         Renderer detachedRend = detachedPixel.GetComponent<Renderer>();

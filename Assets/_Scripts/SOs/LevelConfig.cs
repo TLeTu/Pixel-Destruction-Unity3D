@@ -4,9 +4,10 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "Level_00", menuName = "Game Config/Level Config")]
 public class LevelConfig : ScriptableObject
 {
-    [Header("Level Target")]
+    [Header("Level")]
     public int targetDestroyCount = 50;
     public int scoreThreshold = 500;
+    public int initialWeaponCount = 1;
 
     [Header("Blocks to Spawn")]
     public List<BlockData> blocksToSpawn = new List<BlockData>(); 

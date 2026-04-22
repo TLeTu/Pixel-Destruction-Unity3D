@@ -8,6 +8,7 @@ public class ObstacleManager : MonoBehaviour
     public GameObject obstaclePrefab;
     public static ObstacleManager instance;
     private Dictionary<GameObject, IWeaponController> obstacleWeaponMap = new Dictionary<GameObject, IWeaponController>();
+    private List<WeaponUpgrade> currentWeaponUpgrades = new List<WeaponUpgrade>();
     void Awake()
     {
         instance = this;
@@ -42,4 +43,11 @@ public class ObstacleManager : MonoBehaviour
             }
         }
     }
+}
+
+public enum WeaponUpgrade
+{
+    Damage,
+    Range,
+    MoreWeapons
 }
