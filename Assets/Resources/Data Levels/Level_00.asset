@@ -15,6 +15,6 @@ MonoBehaviour:
   targetDestroyCount: 10
   blocksToSpawn:
   - {fileID: 11400000, guid: 7ea936062ea2030aa9c1909775aa3610, type: 2}
-  damageRadius: 2
+  damageRadius: 1
   maxTapDamage: 100
   minTapDamage: 100

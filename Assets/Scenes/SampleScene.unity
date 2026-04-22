@@ -395,7 +395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!58 &273027776
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1486,7 +1486,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ce70995702f420eb180dc9afee40be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SawController
-  damage: 10
+  damage: 100
   damageTickRate: 0.1
 --- !u!1 &1023745054
 GameObject:
@@ -1703,7 +1703,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &1053603136
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2269,7 +2269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ce70995702f420eb180dc9afee40be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SawController
-  damage: 10
+  damage: 100
   damageTickRate: 0.1
 --- !u!1 &1558325362
 GameObject:

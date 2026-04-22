@@ -45,6 +45,7 @@ public class PixelBlockController : MonoBehaviour
     private readonly Queue<Vector2Int> floodFillQueue = new Queue<Vector2Int>();
     private int activePixelCount = 0;
     private float initalPixelHealth = 100f;
+    private Rigidbody2D pixelBlockRb = null;
 
     private static readonly Vector2Int[] directions = new Vector2Int[]
     {
@@ -53,6 +54,10 @@ public class PixelBlockController : MonoBehaviour
         new Vector2Int(-1, 0),
         new Vector2Int(1, 0)
     };
+    void Start()
+    {
+        pixelBlockRb = GetComponent<Rigidbody2D>();
+    }
 
     public void ConfigBlock(BlockData data)
     {
@@ -272,8 +277,12 @@ public class PixelBlockController : MonoBehaviour
 
 
         GameObject detachedPixel = PoolManager.instance.GetDetachedPixel();
+        Rigidbody2D pixelRb = detachedPixel.GetComponent<Rigidbody2D>();
+        if (pixelBlockRb != null && pixelRb != null)        {
+            pixelRb.linearVelocity = pixelBlockRb.linearVelocity;
+            pixelRb.angularVelocity = pixelBlockRb.angularVelocity;
+        }
         detachedPixel.transform.position = worldPos;
-        // Transfer the pixel's color to the detached pixel but make it slightly darker to indicate it's detached
         Renderer rend = pixel.GetComponent<Renderer>();
         Renderer detachedRend = detachedPixel.GetComponent<Renderer>();
         if (rend != null && detachedRend != null)
