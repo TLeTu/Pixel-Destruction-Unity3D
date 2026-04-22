@@ -7,6 +7,8 @@ public class UIManager : MonoBehaviour
     public Slider xpBar;
     public GameObject mainMenuPanel;
     public GameObject inGamePanel;
+    public GameObject worldCanvas;
+    public GameObject weaponSlotButtonPrefab;
     void Awake()
     {
         instance = this;
@@ -45,6 +47,14 @@ public class UIManager : MonoBehaviour
         {
             panel.SetActive(false);
         }
+    }
+    public void SetUpWeaponSlotButton(GameObject obstacle)
+    {
+        GameObject newButton = Instantiate(weaponSlotButtonPrefab, inGamePanel.transform);
+        WeaponSlotController controller = newButton.GetComponent<WeaponSlotController>();
+        controller.obstacle = obstacle;
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(obstacle.transform.position);
+        newButton.transform.position = screenPos;
     }
     public void MenuPlayButton()
     {

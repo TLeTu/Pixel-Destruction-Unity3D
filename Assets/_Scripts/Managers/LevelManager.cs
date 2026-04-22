@@ -48,7 +48,7 @@ public class LevelManager : MonoBehaviour
         InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
         spawnTimer = 0f;
         blockSpawned = 0;
-        isSpawning = true;
+        isSpawning = false;
         levelFinbished = false;
         foreach (var block in registeredBlocks)
         {
@@ -76,7 +76,8 @@ public class LevelManager : MonoBehaviour
     }
     public void PauseLevel(bool shouldPause)
     {
-        isSpawning = shouldPause;
+        isSpawning = !shouldPause;
+        Debug.Log($"isSpawning = " + isSpawning);
         foreach (var block in registeredBlocks)
         {
             if (block != null)
@@ -87,6 +88,7 @@ public class LevelManager : MonoBehaviour
     }
     private void SpawnBlock()
     {
+        Debug.Log($"isSpawning = " + isSpawning);
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnTime)
         {

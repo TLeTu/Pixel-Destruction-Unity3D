@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
@@ -17,12 +17,6 @@ public class InputManager : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
-        GameManager.instance.OnGameStarted += EnableInput;
-        GameManager.instance.OnGameResumed += EnableInput;
-        GameManager.instance.OnMainMenu += DisableInput;
-        GameManager.instance.OnGameWin += DisableInput;
-        GameManager.instance.OnGamePaused += DisableInput;
-        DisableInput();
     }
 
     void Update()
@@ -35,16 +29,16 @@ public class InputManager : MonoBehaviour
         maxTapDamage = maxDamage;
         minTapDamage = minDamage;
     }
-    private void EnableInput()
+    public void EnableInput()
     {
         enabled = true;
     }
 
-    private void DisableInput()
+    public void DisableInput()
     {
         enabled = false;
     }
-    private void CheckTapInput()
+    public void CheckTapInput()
     {
         bool isTapped = false;
         Vector2 screenPosition = Vector2.zero;
@@ -63,15 +57,18 @@ public class InputManager : MonoBehaviour
         if (isTapped)
         {
             Vector2 worldPos = mainCam.ScreenToWorldPoint(screenPosition);
-            
+
             Collider2D hitCollider = Physics2D.OverlapPoint(worldPos);
 
             if (hitCollider != null)
             {
-                PixelBlockController block = hitCollider.GetComponent<PixelBlockController>();
-                if (block != null)
+                if (GameManager.instance.gameState == GameState.Playing)
                 {
-                    block.HitAtPoint(worldPos, damageRadius, maxTapDamage, minTapDamage);
+                    PixelBlockController block = hitCollider.GetComponent<PixelBlockController>();
+                    if (block != null)
+                    {
+                        block.HitAtPoint(worldPos, damageRadius, maxTapDamage, minTapDamage);
+                    }
                 }
             }
         }
