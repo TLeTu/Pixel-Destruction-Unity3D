@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
+    private bool levelFinbished = false;
     private int blockSpawned = 0;
     void Awake()
     {
@@ -19,38 +20,18 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        GameManager.instance.OnGameStarted += StartLevel;
-        if (levelConfig != null)
-        {
-            InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
-        }
-
-        // // Spawn 1 block
-        // if (levelConfig != null && levelConfig.blocksToSpawn.Count > 0)
-        // {
-        //     BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
-        //     GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
-        //     PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();
-        //     if (blockController == null)
-        //     {
-        //         Debug.LogError("pixelBlockPrefab is missing PixelBlockController component.");
-        //         Destroy(blockObj);
-        //         return;
-        //     }
-        //     RegisterBlock(blockController);
-        //     blockController.ConfigBlock(blockData);
-        //     blockController.Initiate();
-        // }
     }
 
     void Update()
     {
         // Call spawn block every spawnTime seconds
-        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false)
+        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false || levelFinbished)
         {
-            if(blockSpawned >= levelConfig.targetDestroyCount && registeredBlocks.Count == 0)
+            if (blockSpawned >= levelConfig.targetDestroyCount && registeredBlocks.Count == 0 && !levelFinbished)
             {
+                levelFinbished = true;
                 Debug.Log("Level Completed!");
+                GameManager.instance.SetGameState(GameState.GameWin);
 
             }
             return;
@@ -59,13 +40,39 @@ public class LevelManager : MonoBehaviour
         if (blockSpawned >= levelConfig.targetDestroyCount)
         {
             isSpawning = false;
-            Debug.Log("Reached target destroy count: " + levelConfig.targetDestroyCount);
         }
     }
-    private void StartLevel()
+    public void LoadLevel(LevelConfig config)
     {
-        isSpawning = true;
+        levelConfig = config;
+        InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
+        spawnTimer = 0f;
         blockSpawned = 0;
+        isSpawning = true;
+        levelFinbished = false;
+        foreach (var block in registeredBlocks)
+        {
+            if (block != null)
+            {
+                Destroy(block.gameObject);
+            }
+        }
+    }
+    public void CleanUpLevel()
+    {
+        levelConfig = null;
+        isSpawning = false;
+        blockSpawned = 0;
+        spawnTimer = 0f;
+        levelFinbished = false;
+        foreach (var block in registeredBlocks)
+        {
+            if (block != null)
+            {
+                Destroy(block.gameObject);
+            }
+        }
+        registeredBlocks.Clear();
     }
     private void SpawnBlock()
     {

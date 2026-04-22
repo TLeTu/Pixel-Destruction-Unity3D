@@ -10,17 +10,29 @@ public class ScoreManager : MonoBehaviour
     {
         instance = this;
     }
-    void Start()
+    public void CleanUp()
     {
-        UIManager.instance.SetUpXPBar(0f, currentThreshold);
+        currentScore = 0;
+        currentThreshold = 0;
+        scoreThresholds = null;
     }
     public void UpdateScore(int points)
     {
         currentScore += points;
-        Debug.Log("Score updated: " + currentScore);
         UIManager.instance.UpdateXPBar(currentScore);
         CheckForThresholds();
 
+    }
+    public void SetupScoreManager(int currentScore, float[] thresholds)
+    {
+        this.currentScore = currentScore;
+        SetupThresholds(thresholds);
+    }
+    private void SetupThresholds(float[] thresholds)
+    {
+        scoreThresholds = thresholds;
+        currentThreshold = scoreThresholds[0];
+        UIManager.instance.SetUpXPBar(0, currentThreshold);
     }
     private void CheckForThresholds()
     {
@@ -28,12 +40,9 @@ public class ScoreManager : MonoBehaviour
         {
             if (currentScore >= scoreThresholds[i])
             {
-                Debug.Log("Reached score threshold: " + scoreThresholds[i]);
-                // Setup the xp
                 if (i < scoreThresholds.Length - 1)
                 {
                     currentThreshold = scoreThresholds[i + 1];
-                    UIManager.instance.SetUpXPBar(scoreThresholds[i], currentThreshold);
                 }
                 break;
             }

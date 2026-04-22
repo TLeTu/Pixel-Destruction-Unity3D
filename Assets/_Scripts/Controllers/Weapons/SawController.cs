@@ -28,6 +28,14 @@ public class SawController : MonoBehaviour,IWeaponController
             damageTimer = 0f;
         }
     }
+    void Update()
+    {
+        RotateSaw();
+    }
+    private void RotateSaw()
+    {
+        transform.Rotate(Vector3.forward, 300f * Time.deltaTime);
+    }
     public void DetectTargets()
     {
         overlapResults.Clear();

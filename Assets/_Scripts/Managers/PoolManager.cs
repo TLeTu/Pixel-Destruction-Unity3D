@@ -100,4 +100,21 @@ public class PoolManager : MonoBehaviour
 
         }
     }
+    public void ReturnAllToPool()
+    {
+        foreach (GameObject pixel in attachedPixelPool)
+        {
+            if (pixel.activeInHierarchy)
+            {
+                ReturnToPool(pixel, true);
+            }
+        }
+        foreach (GameObject pixel in detachedPixelPool)
+        {
+            if (pixel.activeInHierarchy)
+            {
+                ReturnToPool(pixel, false);
+            }
+        }
+    }
 }

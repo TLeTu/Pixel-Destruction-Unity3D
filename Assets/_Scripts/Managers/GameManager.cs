@@ -44,7 +44,8 @@ public class GameManager : MonoBehaviour
             return;
         }
         LevelConfig config = levelConfigs[levelIndex];
-        LevelManager.instance.levelConfig = config;
+        // LevelManager.instance.levelConfig = config;
+        LevelManager.instance.LoadLevel(config);
     }
     public void SetGameState(GameState newState)
     {
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
             case GameState.Playing:
                 if (currentState == GameState.MainMenu)
                 {
+                    LoadLevel(0);
                     OnGameStarted?.Invoke();
                 }
                 else if (currentState == GameState.Paused)

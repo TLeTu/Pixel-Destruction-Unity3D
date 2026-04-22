@@ -27,6 +27,25 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
+        CheckTapInput();
+    }
+    public void SetTapDamage(float radius, int maxDamage, int minDamage)
+    {
+        damageRadius = radius;
+        maxTapDamage = maxDamage;
+        minTapDamage = minDamage;
+    }
+    private void EnableInput()
+    {
+        enabled = true;
+    }
+
+    private void DisableInput()
+    {
+        enabled = false;
+    }
+    private void CheckTapInput()
+    {
         bool isTapped = false;
         Vector2 screenPosition = Vector2.zero;
 
@@ -56,20 +75,5 @@ public class InputManager : MonoBehaviour
                 }
             }
         }
-    }
-    public void SetTapDamage(float radius, int maxDamage, int minDamage)
-    {
-        damageRadius = radius;
-        maxTapDamage = maxDamage;
-        minTapDamage = minDamage;
-    }
-    private void EnableInput()
-    {
-        enabled = true;
-    }
-
-    private void DisableInput()
-    {
-        enabled = false;
     }
 }
