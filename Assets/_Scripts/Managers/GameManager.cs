@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public event Action<GameState> OnGameStateChanged;
     public GameState gameState;
     [SerializeField] private string levelFolder = "Data Levels";
     private List<LevelConfig> levelConfigs = new List<LevelConfig>();
@@ -70,25 +71,28 @@ public class GameManager : MonoBehaviour
     }
     public void SetGameState(GameState newState)
     {
+        if (gameState == newState)
+        {
+            OnGameStateChanged?.Invoke(gameState);
+            return;
+        }
+
         GameState currentState = gameState;
         gameState = newState;
         switch (newState)
         {
             case GameState.MainMenu:
                 InputManager.instance.DisableInput();
-                UIManager.instance.ShowMainMenu();
                 break;
             case GameState.Playing:
                 if (currentState == GameState.MainMenu)
                 {
-                    UIManager.instance.ShowInGamePanel();
                     LoadLevel(0);
                     InputManager.instance.EnableInput();
                 }
                 else
                 {
                     InputManager.instance.EnableInput();
-                    UIManager.instance.ShowInGamePanel();
                     PauseGame(false);
                 }
                 break;
@@ -101,12 +105,13 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.PlaceWeapon:
                 InputManager.instance.EnableInput();
-                UIManager.instance.ShowPlaceWeaponPanel();
                 PauseGame(true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
+
+            OnGameStateChanged?.Invoke(gameState);
     }
 }
 

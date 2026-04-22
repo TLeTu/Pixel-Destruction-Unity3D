@@ -9,9 +9,54 @@ public class UIManager : MonoBehaviour
     public GameObject inGamePanel;
     public GameObject placeWeaponPanel;
     public GameObject weaponSlotButtonPrefab;
+    public GameObject chooseUpgradePanel;
+    public GameObject upgradeBtn1;
+    public GameObject upgradeBtn2;
     void Awake()
     {
         instance = this;
+    }
+
+    private void OnEnable()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.OnGameStateChanged += HandleGameStateChanged;
+            HandleGameStateChanged(GameManager.instance.gameState);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.OnGameStateChanged -= HandleGameStateChanged;
+        }
+    }
+
+    private void HandleGameStateChanged(GameState state)
+    {
+        HideAllPanels();
+
+        switch (state)
+        {
+            case GameState.MainMenu:
+                ShowPanel(mainMenuPanel);
+                break;
+            case GameState.Playing:
+                ShowPanel(inGamePanel);
+                break;
+            case GameState.PlaceWeapon:
+                ShowPanel(placeWeaponPanel);
+                break;
+            case GameState.ChooseUpgrade:
+                ShowPanel(chooseUpgradePanel);
+                break;
+            case GameState.GameWin:
+                break;
+            default:
+                throw new System.ArgumentOutOfRangeException(nameof(state), state, null);
+        }
     }
 
     public void SetUpXPBar(float minXP, float maxXP)
@@ -45,24 +90,20 @@ public class UIManager : MonoBehaviour
             panel.SetActive(false);
         }
     }
-    public void ShowMainMenu()
+
+    private void HideAllPanels()
     {
-        ShowPanel(mainMenuPanel);
+        HidePanel(mainMenuPanel);
         HidePanel(inGamePanel);
         HidePanel(placeWeaponPanel);
+        HidePanel(chooseUpgradePanel);
     }
-    public void ShowPlaceWeaponPanel()
+    public void SetUpgradeButtons(WeaponUpgrade upgrade1, WeaponUpgrade upgrade2)
     {
-        Debug.Log("Showing Place Weapon Panel");
-        HidePanel(mainMenuPanel);
-        ShowPanel(placeWeaponPanel);
+        upgradeBtn1.GetComponent<UpgradeBtnController>().upgrade = upgrade1;
+        upgradeBtn2.GetComponent<UpgradeBtnController>().upgrade = upgrade2;
     }
-    public void ShowInGamePanel()
-    {
-        HidePanel(mainMenuPanel);
-        ShowPanel(inGamePanel);
-        HidePanel(placeWeaponPanel);
-    }
+
     public void SetUpWeaponSlotButton(GameObject obstacle)
     {
         GameObject newButton = Instantiate(weaponSlotButtonPrefab, placeWeaponPanel.transform);
@@ -73,8 +114,6 @@ public class UIManager : MonoBehaviour
     }
     public void MenuPlayButton()
     {
-        HidePanel(mainMenuPanel);
-        ShowPanel(inGamePanel);
         GameManager.instance.SetGameState(GameState.Playing);
     }
 }
