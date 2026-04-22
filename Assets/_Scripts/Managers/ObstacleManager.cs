@@ -12,19 +12,34 @@ public class ObstacleManager : MonoBehaviour
     {
         instance = this;
     }
-    public void SpawnObstalce(Vector3 position)
+    public void LoadWeaponPrefab(GameObject prefab)
     {
-        GameObject newObstacle = Instantiate(obstaclePrefab, position, Quaternion.identity);
+        weaponPrefab = prefab;
+    }
+    public void SpawnObstacle(Vector3 position)
+    {
+        GameObject newObstacle = Instantiate(obstaclePrefab, position, obstaclePrefab.transform.rotation);
         obstacleWeaponMap[newObstacle] = null;
     }
     public void PlaceWeaponOnObstacle(GameObject obstacle)
     {
         GameObject newWeapon = Instantiate(weaponPrefab, obstacle.transform.position, Quaternion.identity);
-        IWeaponController weaponController = newWeapon.GetComponent<IWeaponController>();   
+        IWeaponController weaponController = newWeapon.GetComponent<IWeaponController>();
         if (obstacleWeaponMap.ContainsKey(obstacle))
         {
             obstacleWeaponMap[obstacle] = weaponController;
         }
         obstacle.SetActive(false);
     }
-}   
+    public void PauseWeapons(bool shouldPause)
+    {
+        foreach (var kvp in obstacleWeaponMap)
+        {
+            IWeaponController weaponController = kvp.Value;
+            if (weaponController != null)
+            {
+                weaponController.Pause(shouldPause);
+            }
+        }
+    }
+}

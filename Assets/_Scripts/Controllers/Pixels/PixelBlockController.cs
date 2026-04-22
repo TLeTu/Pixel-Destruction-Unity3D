@@ -252,11 +252,11 @@ public class PixelBlockController : MonoBehaviour
         }
         CheckSplitChunks();
     }
-    public void PauseBlock()
+    public void PauseBlock(bool shouldPause)
     {
         if (pixelBlockRb != null)
         {
-            pixelBlockRb.simulated = false;
+            pixelBlockRb.simulated = !shouldPause;
         }
     }
 

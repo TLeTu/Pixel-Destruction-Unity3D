@@ -6,6 +6,7 @@ public class LevelConfig : ScriptableObject
 {
     [Header("Level Target")]
     public int targetDestroyCount = 50;
+    public int scoreThreshold = 500;
 
     [Header("Blocks to Spawn")]
     public List<BlockData> blocksToSpawn = new List<BlockData>(); 
@@ -14,4 +15,8 @@ public class LevelConfig : ScriptableObject
     public float damageRadius = 5;
     public int maxTapDamage = 3;
     public int minTapDamage = 1;
+
+    [Header("Obstacles Settings")]
+    public Vector3[] obstaclePositions;
+    public GameObject weaponPrefab;
 }

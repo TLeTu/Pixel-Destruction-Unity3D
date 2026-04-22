@@ -46,6 +46,16 @@ public class GameManager : MonoBehaviour
         LevelConfig config = levelConfigs[levelIndex];
         // LevelManager.instance.levelConfig = config;
         LevelManager.instance.LoadLevel(config);
+        ScoreManager.instance.SetupScoreManager(0, config.scoreThreshold);
+        foreach (Vector3 obstaclePos in config.obstaclePositions)
+        {
+            ObstacleManager.instance.SpawnObstacle(obstaclePos);
+        }
+    }
+    private void PauseGame(bool shouldPause)
+    {
+        ObstacleManager.instance.PauseWeapons(shouldPause);
+        LevelManager.instance.PauseLevel(shouldPause);
     }
     public void SetGameState(GameState newState)
     {
@@ -61,12 +71,12 @@ public class GameManager : MonoBehaviour
                     LoadLevel(0);
                     OnGameStarted?.Invoke();
                 }
-                else if (currentState == GameState.Paused)
+                else if (currentState == GameState.ChooseUpgrade)
                 {
                     OnGameResumed?.Invoke();
                 }
                 break;
-            case GameState.Paused:
+            case GameState.ChooseUpgrade:
                 if (currentState == GameState.Playing)
                 {
                     OnGamePaused?.Invoke();
@@ -89,6 +99,6 @@ public enum GameState
 {
     MainMenu,
     Playing,
-    Paused,
+    ChooseUpgrade,
     GameWin
 }

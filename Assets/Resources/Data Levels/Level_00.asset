@@ -18,3 +18,7 @@ MonoBehaviour:
   damageRadius: 1
   maxTapDamage: 100
   minTapDamage: 100
+  obstaclePositions:
+  - {x: 5, y: 20, z: 0}
+  - {x: -5, y: 20, z: 0}
+  weaponPrefab: {fileID: 1407427171499844550, guid: 36dab7aef6d51332bbae2938d5fb8c48, type: 3}

@@ -74,14 +74,14 @@ public class LevelManager : MonoBehaviour
         }
         registeredBlocks.Clear();
     }
-    public void PauseLevel()
+    public void PauseLevel(bool shouldPause)
     {
-        isSpawning = false;
+        isSpawning = shouldPause;
         foreach (var block in registeredBlocks)
         {
             if (block != null)
             {
-                block.PauseBlock();
+                block.PauseBlock(shouldPause);
             }
         }
     }
