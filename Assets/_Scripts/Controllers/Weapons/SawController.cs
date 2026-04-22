@@ -12,6 +12,7 @@ public class SawController : MonoBehaviour,IWeaponController
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
     private float damageTimer = 0f;
+    private bool pauseSaw = false;
     void Start()
     {
         sawCollider = GetComponent<Collider2D>();
@@ -38,6 +39,10 @@ public class SawController : MonoBehaviour,IWeaponController
     }
     public void DetectTargets()
     {
+        if (pauseSaw)
+        {
+            return;
+        }
         overlapResults.Clear();
         int overlapCount = sawCollider.Overlap(contactFilter, overlapResults);
 
@@ -52,5 +57,9 @@ public class SawController : MonoBehaviour,IWeaponController
                 continue;
             }
         }
+    }
+    public void Pause(bool shouldPause)
+    {
+        pauseSaw = shouldPause;
     }
 }

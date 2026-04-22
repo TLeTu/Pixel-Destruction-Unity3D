@@ -252,6 +252,13 @@ public class PixelBlockController : MonoBehaviour
         }
         CheckSplitChunks();
     }
+    public void PauseBlock()
+    {
+        if (pixelBlockRb != null)
+        {
+            pixelBlockRb.simulated = false;
+        }
+    }
 
     private void TakeDamage(int x, int y, float damage)
     {

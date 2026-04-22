@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
-public class ShredderController : MonoBehaviour
+public class ShredderController : MonoBehaviour, IWeaponController
 {
     [SerializeField]
     private float damage = 1000f;
@@ -10,6 +10,7 @@ public class ShredderController : MonoBehaviour
     private Collider2D shredderCollider;
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
+    private bool pauseShredder = false;
     void Start()
     {
         shredderCollider = GetComponent<Collider2D>();
@@ -19,6 +20,14 @@ public class ShredderController : MonoBehaviour
     }
     void FixedUpdate()
     {
+        DetectTargets();
+    }
+    public void DetectTargets()
+    {
+        if (pauseShredder)
+        {
+            return;
+        }
         // clear previous results
         overlapResults.Clear();
         int overlapCount = shredderCollider.Overlap(contactFilter, overlapResults);
@@ -40,6 +49,10 @@ public class ShredderController : MonoBehaviour
                 pixel.InstaDestroy();
                 ScoreManager.instance.UpdateScore(1);
             }
-        }
+        }       
+    }
+    public void Pause(bool shouldPause)
+    {
+        pauseShredder = shouldPause;
     }
 }

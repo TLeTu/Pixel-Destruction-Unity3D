@@ -74,6 +74,17 @@ public class LevelManager : MonoBehaviour
         }
         registeredBlocks.Clear();
     }
+    public void PauseLevel()
+    {
+        isSpawning = false;
+        foreach (var block in registeredBlocks)
+        {
+            if (block != null)
+            {
+                block.PauseBlock();
+            }
+        }
+    }
     private void SpawnBlock()
     {
         spawnTimer += Time.deltaTime;
