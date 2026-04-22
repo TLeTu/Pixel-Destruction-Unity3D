@@ -55,4 +55,8 @@ public class ShredderController : MonoBehaviour, IWeaponController
     {
         pauseShredder = shouldPause;
     }
+    public void ApplyUpgrade(WeaponUpgrade upgrade)
+    {
+        return;
+    }
 }

@@ -12,5 +12,7 @@ public class WeaponSlotController : MonoBehaviour
             Debug.Log("Trying to place weapon on obstacle: " + obstacle.name);
             ObstacleManager.instance.TryPlaceWeaponOn(obstacle);
         }
+        // Destroy the button after clicking
+        Destroy(gameObject);
     }       
 }

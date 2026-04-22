@@ -7,12 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public GameState gameState;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public event Action OnMainMenu;
-    public event Action OnGameStarted;
-    public event Action OnGameResumed;
-    public event Action OnGamePaused;
-    public event Action OnGameWin;
     [SerializeField] private string levelFolder = "Data Levels";
     private List<LevelConfig> levelConfigs = new List<LevelConfig>();
     public IReadOnlyList<LevelConfig> LevelConfigs => levelConfigs;
@@ -81,35 +75,33 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.MainMenu:
-                OnMainMenu?.Invoke();
                 InputManager.instance.DisableInput();
+                UIManager.instance.ShowMainMenu();
                 break;
             case GameState.Playing:
                 if (currentState == GameState.MainMenu)
                 {
-                    OnGameStarted?.Invoke();
+                    UIManager.instance.ShowInGamePanel();
                     LoadLevel(0);
                     InputManager.instance.EnableInput();
                 }
                 else
                 {
-                    OnGameResumed?.Invoke();
                     InputManager.instance.EnableInput();
+                    UIManager.instance.ShowInGamePanel();
                     PauseGame(false);
                 }
                 break;
             case GameState.ChooseUpgrade:
-                OnGamePaused?.Invoke();
                 InputManager.instance.DisableInput();
                 PauseGame(true);
                 break;
             case GameState.GameWin:
-                OnGameWin?.Invoke();
                 InputManager.instance.DisableInput();
                 break;
             case GameState.PlaceWeapon:
-                OnGamePaused?.Invoke();
                 InputManager.instance.EnableInput();
+                UIManager.instance.ShowPlaceWeaponPanel();
                 PauseGame(true);
                 break;
             default:

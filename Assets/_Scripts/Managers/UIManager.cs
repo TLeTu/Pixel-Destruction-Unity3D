@@ -7,15 +7,11 @@ public class UIManager : MonoBehaviour
     public Slider xpBar;
     public GameObject mainMenuPanel;
     public GameObject inGamePanel;
-    public GameObject worldCanvas;
+    public GameObject placeWeaponPanel;
     public GameObject weaponSlotButtonPrefab;
     void Awake()
     {
         instance = this;
-    }
-    void Start()
-    {
-        GameManager.instance.OnMainMenu += () => ShowPanel(mainMenuPanel);
     }
 
     public void SetUpXPBar(float minXP, float maxXP)
@@ -36,21 +32,40 @@ public class UIManager : MonoBehaviour
 
     private void ShowPanel(GameObject panel)
     {
-        if (panel != null && !panel.activeSelf)
+        if (panel != null)
         {
+            Debug.Log("Showing panel: " + panel.name);
             panel.SetActive(true);
         }
     }
     private void HidePanel(GameObject panel)
     {
-        if (panel != null && panel.activeSelf)
+        if (panel != null)
         {
             panel.SetActive(false);
         }
     }
+    public void ShowMainMenu()
+    {
+        ShowPanel(mainMenuPanel);
+        HidePanel(inGamePanel);
+        HidePanel(placeWeaponPanel);
+    }
+    public void ShowPlaceWeaponPanel()
+    {
+        Debug.Log("Showing Place Weapon Panel");
+        HidePanel(mainMenuPanel);
+        ShowPanel(placeWeaponPanel);
+    }
+    public void ShowInGamePanel()
+    {
+        HidePanel(mainMenuPanel);
+        ShowPanel(inGamePanel);
+        HidePanel(placeWeaponPanel);
+    }
     public void SetUpWeaponSlotButton(GameObject obstacle)
     {
-        GameObject newButton = Instantiate(weaponSlotButtonPrefab, inGamePanel.transform);
+        GameObject newButton = Instantiate(weaponSlotButtonPrefab, placeWeaponPanel.transform);
         WeaponSlotController controller = newButton.GetComponent<WeaponSlotController>();
         controller.obstacle = obstacle;
         Vector3 screenPos = Camera.main.WorldToScreenPoint(obstacle.transform.position);

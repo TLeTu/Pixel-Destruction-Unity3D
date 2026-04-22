@@ -35,6 +35,17 @@ public class ScoreManager : MonoBehaviour
         while (currentScore >= currentThreshold)
         {
             currentThreshold += scoreThresholds;
+            UIManager.instance.SetUpXPBar(currentScore, currentThreshold);
+            WeaponUpgrade upgrade = ObstacleManager.instance.GetRandomUpgrade();
+            Debug.Log("Score threshold reached! Awarding upgrade: " + upgrade);
+            if (upgrade == WeaponUpgrade.MoreWeapons)
+            {
+                GameManager.instance.StartPlaceWeapon(1);
+            }
+            else
+            {
+                ObstacleManager.instance.ApplyUpgradeToWeapon(upgrade);
+            }
         }
     }
 }

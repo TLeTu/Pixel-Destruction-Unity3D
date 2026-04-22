@@ -62,4 +62,19 @@ public class SawController : MonoBehaviour,IWeaponController
     {
         pauseSaw = shouldPause;
     }
+    public void ApplyUpgrade(WeaponUpgrade upgrade)
+    {
+        switch (upgrade)
+        {
+            case WeaponUpgrade.Damage:
+                damage += 5f;
+                break;
+            case WeaponUpgrade.Time:
+                damageTickRate = Mathf.Max(0.05f, damageTickRate - 0.02f);
+                break;
+            case WeaponUpgrade.Range:
+                sawCollider.transform.localScale += new Vector3(0.2f, 0.2f, 0f);
+                break;
+        }
+    }
 }

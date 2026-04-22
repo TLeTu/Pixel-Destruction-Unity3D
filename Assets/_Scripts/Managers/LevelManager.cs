@@ -88,7 +88,6 @@ public class LevelManager : MonoBehaviour
     }
     private void SpawnBlock()
     {
-        Debug.Log($"isSpawning = " + isSpawning);
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnTime)
         {

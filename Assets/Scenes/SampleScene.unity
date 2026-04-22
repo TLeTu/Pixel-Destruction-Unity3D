@@ -1768,7 +1768,7 @@ MonoBehaviour:
   xpBar: {fileID: 429611742}
   mainMenuPanel: {fileID: 1023745054}
   inGamePanel: {fileID: 209116797}
-  worldCanvas: {fileID: 0}
+  placeWeaponPanel: {fileID: 992318892}
   weaponSlotButtonPrefab: {fileID: 7336194417556851300, guid: 4d9bb0535fa11fa06ae18b3dd253f9e3, type: 3}
 --- !u!1 &1340472124
 GameObject:
