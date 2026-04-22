@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -102,6 +103,28 @@ public class UIManager : MonoBehaviour
     {
         upgradeBtn1.GetComponent<UpgradeBtnController>().upgrade = upgrade1;
         upgradeBtn2.GetComponent<UpgradeBtnController>().upgrade = upgrade2;
+
+        SetButtonLabel(upgradeBtn1, upgrade1.ToString());
+        SetButtonLabel(upgradeBtn2, upgrade2.ToString());
+    }
+
+    private void SetButtonLabel(GameObject buttonObj, string label)
+    {
+        TMP_Text tmpText = buttonObj.GetComponentInChildren<TMP_Text>();
+        if (tmpText != null)
+        {
+            tmpText.text = label;
+            return;
+        }
+
+        Text legacyText = buttonObj.GetComponentInChildren<Text>();
+        if (legacyText != null)
+        {
+            legacyText.text = label;
+            return;
+        }
+
+        Debug.LogWarning("No text component found on button: " + buttonObj.name);
     }
 
     public void SetUpWeaponSlotButton(GameObject obstacle)

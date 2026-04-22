@@ -63,6 +63,32 @@ public class GameManager : MonoBehaviour
 
         SetGameState(GameState.PlaceWeapon);
     }
+    public void StartUpgrade()
+    {
+        WeaponUpgrade upgrade1 = ObstacleManager.instance.GetRandomUpgrade();
+        WeaponUpgrade upgrade2 = ObstacleManager.instance.GetRandomUpgrade();
+        while (upgrade2 == upgrade1)        {
+            upgrade2 = ObstacleManager.instance.GetRandomUpgrade();
+        }
+        UIManager.instance.SetUpgradeButtons(upgrade1, upgrade2);
+    }
+
+    public void OnUpgradeSelected(WeaponUpgrade upgrade)
+    {
+        if (gameState != GameState.ChooseUpgrade)
+        {
+            return;
+        }
+
+        if (upgrade == WeaponUpgrade.MoreWeapons)
+        {
+            StartPlaceWeapon(1);
+            return;
+        }
+
+        ObstacleManager.instance.ApplyUpgradeToWeapon(upgrade);
+        SetGameState(GameState.Playing);
+    }
     private void PauseGame(bool shouldPause)
     {
         Debug.Log((shouldPause ? "Pausing" : "Resuming") + " game. Pausing weapons and level.");
@@ -98,6 +124,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.ChooseUpgrade:
                 InputManager.instance.DisableInput();
+                StartUpgrade();
                 PauseGame(true);
                 break;
             case GameState.GameWin:
@@ -111,7 +138,7 @@ public class GameManager : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
 
-            OnGameStateChanged?.Invoke(gameState);
+        OnGameStateChanged?.Invoke(gameState);
     }
 }
 
