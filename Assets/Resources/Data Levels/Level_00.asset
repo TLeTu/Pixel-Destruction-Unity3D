@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c52e9905bf3456619e11e56432f7be1, type: 3}
   m_Name: Level_00
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  targetDestroyCount: 1000
+  targetDestroyCount: 100
   scoreThreshold: 100
   initialWeaponCount: 1
   blocksToSpawn:

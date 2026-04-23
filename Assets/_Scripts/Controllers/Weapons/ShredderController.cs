@@ -44,7 +44,7 @@ public class ShredderController : MonoBehaviour, IWeaponController
             }
 
             PixelController pixel = col.GetComponent<PixelController>();
-            if (pixel != null && !pixel.isReturningToPool)
+            if (pixel != null && pixel.isActiveAndEnabled && pixel.gameObject.activeInHierarchy && !pixel.isReturningToPool)
             {
                 pixel.InstaDestroy();
                 ScoreManager.instance.UpdateScore(1);

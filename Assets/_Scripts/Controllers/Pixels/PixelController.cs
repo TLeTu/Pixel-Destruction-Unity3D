@@ -16,9 +16,19 @@ public class PixelController : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (shrinkRoutine != null)
+        {
+            StopCoroutine(shrinkRoutine);
+            shrinkRoutine = null;
+        }
+        isReturningToPool = false;
+    }
+
     public void InstaDestroy()
     {
-        if (isReturningToPool)
+        if (isReturningToPool || !isActiveAndEnabled || !gameObject.activeInHierarchy)
             return;
 
         isReturningToPool = true;

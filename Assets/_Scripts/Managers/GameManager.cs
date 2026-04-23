@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         UIManager.instance.SetUpgradeButtons(upgrade1, upgrade2);
     }
 
-    public void EndLevel()
+    private void EndLevel()
     {
         Debug.Log("Ending level and cleaning up. Returning to main menu.");
         PauseGame(true);
@@ -111,16 +111,18 @@ public class GameManager : MonoBehaviour
         PoolManager.instance.ResetSpawnedPixelCount();
         ScoreManager.instance.CleanUp();
         UIManager.instance.ClearWeaponSlotButtons();
+    }
+    public void NextLevel()
+    {
+        int nextLevelIndex = currentLevelIndex + 1;
+        if (nextLevelIndex >= levelConfigs.Count)
+        {
+            Debug.Log("All levels completed. Returning to main menu.");
+            SetGameState(GameState.MainMenu);
+            return;
+        }
 
-        // int nextLevelIndex = currentLevelIndex + 1;
-        // if (nextLevelIndex >= levelConfigs.Count)
-        // {
-        //     Debug.Log("All levels completed. Returning to main menu.");
-        //     SetGameState(GameState.MainMenu);
-        //     return;
-        // }
-
-        // LoadLevel(nextLevelIndex);
+        LoadLevel(nextLevelIndex);
     }
 
     public void OnUpgradeSelected(WeaponUpgrade upgrade)
@@ -137,6 +139,17 @@ public class GameManager : MonoBehaviour
         }
 
         ObstacleManager.instance.ApplyUpgradeToWeapon(upgrade);
+        SetGameState(GameState.Playing);
+    }
+    public void ReplayLevel()
+    {
+        EndLevel();
+        LoadLevel(currentLevelIndex);
+        SetGameState(GameState.Playing);
+    }
+    public void StartGame()
+    {
+        LoadLevel(0);
         SetGameState(GameState.Playing);
     }
     private void PauseGame(bool shouldPause)
@@ -158,20 +171,11 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.MainMenu:
-                InputManager.instance.DisableInput();
+                EndLevel();
                 break;
             case GameState.Playing:
-                if (currentState == GameState.MainMenu)
-                {
-                    LoadLevel(0);
-                    PauseGame(false);
-                    InputManager.instance.EnableInput();
-                }
-                else
-                {
-                    InputManager.instance.EnableInput();
-                    PauseGame(false);
-                }
+                InputManager.instance.EnableInput();
+                PauseGame(false);
                 break;
             case GameState.ChooseUpgrade:
                 PauseGame(true);

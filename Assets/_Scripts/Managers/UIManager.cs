@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     public GameObject gameWinPanel;
     public GameObject upgradeBtn1;
     public GameObject upgradeBtn2;
+    public GameObject nextLevelBtn;
     void Awake()
     {
         instance = this;
@@ -159,6 +160,14 @@ public class UIManager : MonoBehaviour
 
     public void MenuPlayButton()
     {
-        GameManager.instance.SetGameState(GameState.Playing);
+        GameManager.instance.StartGame();
+    }
+    public void NextLevelButton()
+    {
+        GameManager.instance.NextLevel();
+    }
+    public void BackToMenuButton()
+    {
+        GameManager.instance.SetGameState(GameState.MainMenu);
     }
 }
