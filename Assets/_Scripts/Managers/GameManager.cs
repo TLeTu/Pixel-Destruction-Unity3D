@@ -149,7 +149,16 @@ public class GameManager : MonoBehaviour
     }
     public void StartGame()
     {
-        LoadLevel(0);
+        int levelToLoad = 0;
+
+        if (SaveManager.instance != null)
+        {
+            levelToLoad = SaveManager.instance.LoadLevelIndex();
+        }
+
+        int maxLevelIndex = Mathf.Max(0, levelConfigs.Count - 1);
+        levelToLoad = Mathf.Clamp(levelToLoad, 0, maxLevelIndex);
+        LoadLevel(levelToLoad);
     }
     private void PauseGame(bool shouldPause)
     {
@@ -182,6 +191,10 @@ public class GameManager : MonoBehaviour
                 StartUpgrade();
                 break;
             case GameState.GameWin:
+                if (SaveManager.instance != null)
+                {
+                    SaveManager.instance.SaveLevelIndex(currentLevelIndex);
+                }
                 EndLevel();
                 InputManager.instance.DisableInput();
                 break;

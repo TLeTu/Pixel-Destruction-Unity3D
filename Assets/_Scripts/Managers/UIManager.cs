@@ -17,6 +17,8 @@ public class UIManager : MonoBehaviour
     public GameObject nextLevelBtn;
     public TextMeshProUGUI levelInGameText;
     public TextMeshProUGUI XPBarText;
+    public Slider scoreBar;
+    public TextMeshProUGUI scoreBarText;
     void Awake()
     {
         instance = this;
@@ -71,7 +73,7 @@ public class UIManager : MonoBehaviour
         {
             xpBar.minValue = minXP;
             xpBar.maxValue = maxXP;
-            XPBarText.text = $"{minXP} / {maxXP} XP";
+            XPBarText.text = $"{minXP} / {maxXP} $";
         }
     }
     public void UpdateXPBar(float currentXP)
@@ -79,7 +81,35 @@ public class UIManager : MonoBehaviour
         if (xpBar != null)
         {
             xpBar.value = currentXP;
-            XPBarText.text = $"{currentXP} / {xpBar.maxValue} XP";
+            XPBarText.text = $"{currentXP} / {xpBar.maxValue} $";
+        }
+    }
+
+    public void SetUpScoreBar(float minScore, float maxScore)
+    {
+        if (scoreBar != null)
+        {
+            scoreBar.minValue = minScore;
+            scoreBar.maxValue = maxScore;
+            scoreBar.value = minScore;
+
+            if (scoreBarText != null)
+            {
+                scoreBarText.text = $"{minScore} / {maxScore} XP";
+            }
+        }
+    }
+
+    public void UpdateScoreBar(float currentScore)
+    {
+        if (scoreBar != null)
+        {
+            scoreBar.value = currentScore;
+
+            if (scoreBarText != null)
+            {
+                scoreBarText.text = $"{currentScore} / {scoreBar.maxValue} XP";
+            }
         }
     }
 
