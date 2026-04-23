@@ -5,9 +5,16 @@ public class PixelController : MonoBehaviour
 {
     private Coroutine shrinkRoutine;
     public bool isReturningToPool = false;
+    private Vector3 initialLocalScale;
+
+    private void Awake()
+    {
+        initialLocalScale = transform.localScale;
+    }
 
     private void OnEnable()
     {
+        transform.localScale = initialLocalScale;
         isReturningToPool = false;
         if (shrinkRoutine != null)
         {
@@ -59,8 +66,7 @@ public class PixelController : MonoBehaviour
         isReturningToPool = false;
 
         PoolManager.instance.ReturnToPool(gameObject, false);
-        transform.localScale = startScale;
-        transform.rotation = Quaternion.identity;
+        
     }
 
 }

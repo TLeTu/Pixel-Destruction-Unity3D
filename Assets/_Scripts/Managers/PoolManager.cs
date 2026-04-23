@@ -78,6 +78,13 @@ public class PoolManager : MonoBehaviour
     }
     public void ReturnToPool(GameObject pixel, bool isAttached)
     {
+        Rigidbody2D rb = pixel != null ? pixel.GetComponent<Rigidbody2D>() : null;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
         if (isAttached)
         {
             if (attachedPixelPool.Contains(pixel))

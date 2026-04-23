@@ -55,6 +55,7 @@ public class LevelManager : MonoBehaviour
         {
             if (block != null)
             {
+                block.ReturnAllPixelsToPool();
                 block.OnChunkCreated -= HandleBlockCreated;
                 block.OnBlockDestroyed -= HandleBlockDestroyed;
                 Destroy(block.gameObject);

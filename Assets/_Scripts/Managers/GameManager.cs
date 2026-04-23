@@ -150,7 +150,6 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         LoadLevel(0);
-        SetGameState(GameState.Playing);
     }
     private void PauseGame(bool shouldPause)
     {

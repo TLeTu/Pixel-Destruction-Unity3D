@@ -260,6 +260,31 @@ public class PixelBlockController : MonoBehaviour
         }
     }
 
+    public void ReturnAllPixelsToPool()
+    {
+        if (pixelObjects == null)
+        {
+            return;
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                GameObject pixel = pixelObjects[x, y];
+                if (pixel == null)
+                {
+                    continue;
+                }
+
+                pixelObjects[x, y] = null;
+                PoolManager.instance.ReturnToPool(pixel, true);
+            }
+        }
+
+        activePixelCount = 0;
+    }
+
     private void TakeDamage(int x, int y, float damage)
     {
         if (healthGrid[x, y] > 0)
