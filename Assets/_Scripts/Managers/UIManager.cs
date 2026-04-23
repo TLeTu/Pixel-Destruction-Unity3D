@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public GameObject placeWeaponPanel;
     public GameObject weaponSlotButtonPrefab;
     public GameObject chooseUpgradePanel;
+    public GameObject gameWinPanel;
     public GameObject upgradeBtn1;
     public GameObject upgradeBtn2;
     void Awake()
@@ -54,6 +55,7 @@ public class UIManager : MonoBehaviour
                 ShowPanel(chooseUpgradePanel);
                 break;
             case GameState.GameWin:
+                ShowPanel(gameWinPanel);
                 break;
             default:
                 throw new System.ArgumentOutOfRangeException(nameof(state), state, null);
@@ -98,6 +100,7 @@ public class UIManager : MonoBehaviour
         HidePanel(inGamePanel);
         HidePanel(placeWeaponPanel);
         HidePanel(chooseUpgradePanel);
+        HidePanel(gameWinPanel);
     }
     public void SetUpgradeButtons(WeaponUpgrade upgrade1, WeaponUpgrade upgrade2)
     {
@@ -135,6 +138,25 @@ public class UIManager : MonoBehaviour
         Vector3 screenPos = Camera.main.WorldToScreenPoint(obstacle.transform.position);
         newButton.transform.position = screenPos;
     }
+
+    public void ClearWeaponSlotButtons()
+    {
+        if (placeWeaponPanel == null)
+        {
+            return;
+        }
+
+        Transform panel = placeWeaponPanel.transform;
+        for (int i = panel.childCount - 1; i >= 0; i--)
+        {
+            Transform child = panel.GetChild(i);
+            if (child.GetComponent<WeaponSlotController>() != null)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
     public void MenuPlayButton()
     {
         GameManager.instance.SetGameState(GameState.Playing);

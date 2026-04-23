@@ -87,6 +87,11 @@ public class ObstacleManager : MonoBehaviour
     }
     public void TryPlaceWeaponOn(GameObject obstacle)
     {
+        if (weaponsToPlaceQuota <= 0)
+        {
+            return;
+        }
+
         if (obstacleWeaponMap.ContainsKey(obstacle) && obstacleWeaponMap[obstacle] == null)
         {
             Debug.Log("Placing weapon on obstacle: " + obstacle.name);

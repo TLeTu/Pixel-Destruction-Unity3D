@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         LevelConfig config = levelConfigs[levelIndex];
         // LevelManager.instance.levelConfig = config;
         InputManager.instance.SetTapDamage(config.damageRadius, config.maxTapDamage, config.minTapDamage);
-        ScoreManager.instance.SetupScoreManager(0, config.scoreThreshold);
+        ScoreManager.instance.SetupScoreManager(0, config.scoreThreshold, config.targetDestroyCount);
         foreach (Vector3 obstaclePos in config.obstaclePositions)
         {
             ObstacleManager.instance.SpawnObstacle(obstaclePos);
@@ -59,6 +59,13 @@ public class GameManager : MonoBehaviour
     }
     public void StartPlaceWeapon(int numberOfWeaponsToPlace)
     {
+        if (numberOfWeaponsToPlace <= 0)
+        {
+            Debug.Log("Skipping Place Weapon phase because quota is 0.");
+            SetGameState(GameState.Playing);
+            return;
+        }
+
         Debug.Log("Starting Place Weapon phase with quota: " + numberOfWeaponsToPlace);
         ObstacleManager.instance.StartPlacingSession(numberOfWeaponsToPlace);
 
@@ -72,6 +79,28 @@ public class GameManager : MonoBehaviour
             upgrade2 = ObstacleManager.instance.GetRandomUpgrade();
         }
         UIManager.instance.SetUpgradeButtons(upgrade1, upgrade2);
+    }
+
+    public void EndLevel()
+    {
+        PauseGame(true);
+        InputManager.instance.DisableInput();
+
+        LevelManager.instance.CleanUpLevel();
+        ObstacleManager.instance.CleanUp();
+        PoolManager.instance.ReturnAllToPool();
+        ScoreManager.instance.CleanUp();
+        UIManager.instance.ClearWeaponSlotButtons();
+
+        // int nextLevelIndex = currentLevelIndex + 1;
+        // if (nextLevelIndex >= levelConfigs.Count)
+        // {
+        //     Debug.Log("All levels completed. Returning to main menu.");
+        //     SetGameState(GameState.MainMenu);
+        //     return;
+        // }
+
+        // LoadLevel(nextLevelIndex);
     }
 
     public void OnUpgradeSelected(WeaponUpgrade upgrade)

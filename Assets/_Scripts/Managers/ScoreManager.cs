@@ -7,6 +7,8 @@ public class ScoreManager : MonoBehaviour
     private int currentScore = 0;
     private int currentThreshold = 100;
     private bool isReady = false;
+    private int scoreTarget = 1000;
+    private bool reachedTarget = false;
     void Awake()
     {
         instance = this;
@@ -17,10 +19,11 @@ public class ScoreManager : MonoBehaviour
         currentThreshold = 0;
         scoreThresholds = 0;
         isReady = false;
+        reachedTarget = false;
     }
     public void UpdateScore(int points)
     {
-        if (!isReady)
+        if (!isReady || reachedTarget)
         {
             return;
         }
@@ -30,12 +33,14 @@ public class ScoreManager : MonoBehaviour
         CheckForThresholds();
 
     }
-    public void SetupScoreManager(int currentScore, int thresholds)
+    public void SetupScoreManager(int currentScore, int thresholds, int scoreTarget)
     {
         this.currentScore = currentScore;
         this.scoreThresholds = thresholds;
+        this.scoreTarget = scoreTarget;
         this.currentThreshold = scoreThresholds;
         isReady = true;
+        reachedTarget = false;
         UIManager.instance.SetUpXPBar(0, currentThreshold);
     }
     private void CheckForThresholds()
@@ -50,6 +55,12 @@ public class ScoreManager : MonoBehaviour
             currentThreshold += scoreThresholds;
             UIManager.instance.SetUpXPBar(currentScore, currentThreshold);
             GameManager.instance.SetGameState(GameState.ChooseUpgrade);
+        }
+
+        if (currentScore >= scoreTarget)
+        {
+            reachedTarget = true;
+            GameManager.instance.SetGameState(GameState.GameWin);
         }
     }
 }

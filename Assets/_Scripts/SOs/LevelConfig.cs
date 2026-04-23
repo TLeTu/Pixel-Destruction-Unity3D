@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class LevelConfig : ScriptableObject
 {
     [Header("Level")]
-    public int targetDestroyCount = 50;
+    public int targetDestroyCount = 10000;
     public int scoreThreshold = 500;
     public int initialWeaponCount = 1;
 
