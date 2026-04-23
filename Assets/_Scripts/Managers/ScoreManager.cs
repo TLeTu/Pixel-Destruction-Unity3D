@@ -42,6 +42,7 @@ public class ScoreManager : MonoBehaviour
         isReady = true;
         reachedTarget = false;
         UIManager.instance.SetUpXPBar(0, currentThreshold);
+        UIManager.instance.UpdateXPBar(this.currentScore);
     }
     private void CheckForThresholds()
     {

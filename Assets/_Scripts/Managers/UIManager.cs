@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     public GameObject upgradeBtn1;
     public GameObject upgradeBtn2;
     public GameObject nextLevelBtn;
+    public TextMeshProUGUI levelInGameText;
+    public TextMeshProUGUI XPBarText;
     void Awake()
     {
         instance = this;
@@ -69,6 +71,7 @@ public class UIManager : MonoBehaviour
         {
             xpBar.minValue = minXP;
             xpBar.maxValue = maxXP;
+            XPBarText.text = $"{minXP} / {maxXP} XP";
         }
     }
     public void UpdateXPBar(float currentXP)
@@ -76,6 +79,15 @@ public class UIManager : MonoBehaviour
         if (xpBar != null)
         {
             xpBar.value = currentXP;
+            XPBarText.text = $"{currentXP} / {xpBar.maxValue} XP";
+        }
+    }
+
+    public void SetLevelText(int levelIndex)
+    {
+        if (levelInGameText != null)
+        {
+            levelInGameText.text = "LEVEL " + (levelIndex + 1);
         }
     }
 
@@ -169,5 +181,9 @@ public class UIManager : MonoBehaviour
     public void BackToMenuButton()
     {
         GameManager.instance.SetGameState(GameState.MainMenu);
+    }
+    public void ReplayLevelButton()
+    {
+        GameManager.instance.ReplayLevel();
     }
 }

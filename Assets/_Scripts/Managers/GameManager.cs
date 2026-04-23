@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
         currentLevelIndex = levelIndex;
         LevelConfig config = levelConfigs[levelIndex];
         // LevelManager.instance.levelConfig = config;
+        UIManager.instance.SetLevelText(currentLevelIndex);
         InputManager.instance.SetTapDamage(config.damageRadius, config.maxTapDamage, config.minTapDamage);
         ScoreManager.instance.SetupScoreManager(0, config.scoreThreshold, config.targetDestroyCount);
         foreach (Vector3 obstaclePos in config.obstaclePositions)
@@ -145,7 +146,6 @@ public class GameManager : MonoBehaviour
     {
         EndLevel();
         LoadLevel(currentLevelIndex);
-        SetGameState(GameState.Playing);
     }
     public void StartGame()
     {
