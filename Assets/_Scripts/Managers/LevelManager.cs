@@ -11,8 +11,6 @@ public class LevelManager : MonoBehaviour
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
-    private bool levelFinbished = false;
-    private int blockSpawned = 0;
     void Awake()
     {
         instance = this;
@@ -25,50 +23,32 @@ public class LevelManager : MonoBehaviour
     void Update()
     {
         // Call spawn block every spawnTime seconds
-        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false || levelFinbished)
+        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false)
         {
-            if (blockSpawned >= levelConfig.targetDestroyCount && registeredBlocks.Count == 0 && !levelFinbished)
-            {
-                levelFinbished = true;
-                Debug.Log("Level Completed!");
-                GameManager.instance.SetGameState(GameState.GameWin);
-
-            }
             return;
         }
         SpawnBlock();
-        if (blockSpawned >= levelConfig.targetDestroyCount)
-        {
-            isSpawning = false;
-        }
     }
     public void LoadLevel(LevelConfig config)
     {
+        // LoadLevel only sets up data for a new level.
+        // Cleanup of old blocks is handled by CleanUpLevel.
         levelConfig = config;
-        InputManager.instance.SetTapDamage(levelConfig.damageRadius, levelConfig.maxTapDamage, levelConfig.minTapDamage);
         spawnTimer = 0f;
-        blockSpawned = 0;
         isSpawning = false;
-        levelFinbished = false;
-        foreach (var block in registeredBlocks)
-        {
-            if (block != null)
-            {
-                Destroy(block.gameObject);
-            }
-        }
     }
     public void CleanUpLevel()
     {
+        // CleanUpLevel tears down all spawned runtime content from the active level.
         levelConfig = null;
         isSpawning = false;
-        blockSpawned = 0;
         spawnTimer = 0f;
-        levelFinbished = false;
         foreach (var block in registeredBlocks)
         {
             if (block != null)
             {
+                block.OnChunkCreated -= HandleBlockCreated;
+                block.OnBlockDestroyed -= HandleBlockDestroyed;
                 Destroy(block.gameObject);
             }
         }
@@ -92,7 +72,6 @@ public class LevelManager : MonoBehaviour
         if (spawnTimer >= spawnTime)
         {
             spawnTimer = 0f;
-            blockSpawned++;
             BlockData blockData = levelConfig.blocksToSpawn[Random.Range(0, levelConfig.blocksToSpawn.Count)];
             GameObject blockObj = Instantiate(pixelBlockPrefab, spawnPoint.transform.position, Quaternion.identity);
             PixelBlockController blockController = blockObj.GetComponent<PixelBlockController>();

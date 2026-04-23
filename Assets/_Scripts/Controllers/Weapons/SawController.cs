@@ -13,7 +13,7 @@ public class SawController : MonoBehaviour,IWeaponController
     private List<Collider2D> overlapResults = new List<Collider2D>();
     private float damageTimer = 0f;
     private bool pauseSaw = false;
-    void Start()
+    void Awake()
     {
         sawCollider = GetComponent<Collider2D>();
 

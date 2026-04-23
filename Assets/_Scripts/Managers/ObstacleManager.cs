@@ -125,6 +125,9 @@ public class ObstacleManager : MonoBehaviour
             Destroy(obstacle);
         }
         obstacleWeaponMap.Clear();
+        weaponsToPlaceQuota = 0;
+        weaponsPlacedThisSession = 0;
+        currentUpgrades.Clear();
     }
     public WeaponUpgrade GetRandomUpgrade()
     {

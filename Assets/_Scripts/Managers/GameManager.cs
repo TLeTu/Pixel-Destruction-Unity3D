@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         currentLevelIndex = levelIndex;
         LevelConfig config = levelConfigs[levelIndex];
         // LevelManager.instance.levelConfig = config;
+        InputManager.instance.SetTapDamage(config.damageRadius, config.maxTapDamage, config.minTapDamage);
         ScoreManager.instance.SetupScoreManager(0, config.scoreThreshold);
         foreach (Vector3 obstaclePos in config.obstaclePositions)
         {
