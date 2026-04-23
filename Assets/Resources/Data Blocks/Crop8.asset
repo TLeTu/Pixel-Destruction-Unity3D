@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 963c1ba0fdca071b1905cadeaf71f5dc, type: 3}
-  m_Name: Crop1
+  m_Name: Crop8
   m_EditorClassIdentifier: Assembly-CSharp::BlockData
-  sprite: {fileID: 21300000, guid: ad7a1ec876280aafdb3f016a98f94828, type: 3}
+  sprite: {fileID: 21300000, guid: 9d765fa6092e28fe8883d3f5298c0e67, type: 3}
   pixelHealth: 100

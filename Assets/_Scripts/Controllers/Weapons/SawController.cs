@@ -1,13 +1,26 @@
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
-public class SawController : MonoBehaviour,IWeaponController
+public class SawController : MonoBehaviour, IWeaponController
 {
     [SerializeField]
     private float damage = 10f;
     [SerializeField]
     private float damageTickRate = 0.1f;
+    [SerializeField]
+    private float rotationSpeed = 120f;
+    [SerializeField]
+    private float rotationSpeedUpgradeStep = 20f;
+    [SerializeField]
+    private float damageUpgradeStep = 15f;
+    [SerializeField]
+    private float damageTickRateUpgradeStep = 0.002f;
+    [SerializeField]
+    private float minDamageTickRate = 0.02f;
+    [SerializeField]
+    private float maxRangeScaleX = 7f;
+    [SerializeField]
+    private float rangeUpgradeStep = 0.5f;
     private Collider2D sawCollider;
     private ContactFilter2D contactFilter;
     private List<Collider2D> overlapResults = new List<Collider2D>();
@@ -35,7 +48,7 @@ public class SawController : MonoBehaviour,IWeaponController
     }
     private void RotateSaw()
     {
-        transform.Rotate(Vector3.forward, 300f * Time.deltaTime);
+        transform.Rotate(Vector3.forward, rotationSpeed * Time.deltaTime);
     }
     public void DetectTargets()
     {
@@ -67,13 +80,17 @@ public class SawController : MonoBehaviour,IWeaponController
         switch (upgrade)
         {
             case WeaponUpgrade.Damage:
-                damage += 5f;
+                damage += damageUpgradeStep;
                 break;
             case WeaponUpgrade.Time:
-                damageTickRate = Mathf.Max(0.05f, damageTickRate - 0.02f);
+                damageTickRate = Mathf.Max(minDamageTickRate, damageTickRate - damageTickRateUpgradeStep);
+                rotationSpeed += rotationSpeedUpgradeStep;
                 break;
             case WeaponUpgrade.Range:
-                sawCollider.transform.localScale += new Vector3(0.2f, 0.2f, 0f);
+                if (sawCollider.transform.localScale.x < maxRangeScaleX)
+                {
+                    sawCollider.transform.localScale += new Vector3(rangeUpgradeStep, rangeUpgradeStep, 0f);
+                }
                 break;
         }
     }

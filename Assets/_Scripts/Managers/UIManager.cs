@@ -149,9 +149,39 @@ public class UIManager : MonoBehaviour
     {
         upgradeBtn1.GetComponent<UpgradeBtnController>().upgrade = upgrade1;
         upgradeBtn2.GetComponent<UpgradeBtnController>().upgrade = upgrade2;
-
-        SetButtonLabel(upgradeBtn1, upgrade1.ToString());
-        SetButtonLabel(upgradeBtn2, upgrade2.ToString());
+        string label1 = "";
+        string label2 = "";
+        switch (upgrade1)        {
+            case WeaponUpgrade.Damage:
+                label1 = "Damage +";
+                break;
+            case WeaponUpgrade.Time:
+                label1 = "Faster Attacks";
+                break;
+            case WeaponUpgrade.Range:
+                label1 = "Range +";
+                break;
+            case WeaponUpgrade.MoreWeapons:
+                label1 = "More Weapons";
+                break;
+        }
+        switch (upgrade2)
+        {
+            case WeaponUpgrade.Damage:
+                label2 = "Damage +";
+                break;
+            case WeaponUpgrade.Time:
+                label2 = "Faster Attacks";
+                break;
+            case WeaponUpgrade.Range:
+                label2 = "Range +";
+                break;
+            case WeaponUpgrade.MoreWeapons:
+                label2 = "More Weapons";
+                break;
+        }
+        SetButtonLabel(upgradeBtn1, label1);
+        SetButtonLabel(upgradeBtn2, label2);
     }
 
     private void SetButtonLabel(GameObject buttonObj, string label)

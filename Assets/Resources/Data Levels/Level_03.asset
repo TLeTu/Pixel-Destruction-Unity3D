@@ -12,20 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c52e9905bf3456619e11e56432f7be1, type: 3}
   m_Name: Level_03
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  targetDestroyCount: 100
-  scoreThreshold: 300
-  initialWeaponCount: 1
+  targetDestroyCount: 8000
+  scoreThreshold: 500
+  initialWeaponCount: 2
   blocksToSpawn:
-  - {fileID: 11400000, guid: c57630025f3d415448e01dbc7c008ed1, type: 2}
-  - {fileID: 11400000, guid: f42bc9656fda7ac2c875263678ab4b8c, type: 2}
-  - {fileID: 11400000, guid: e0a4edaba871897f7a9b2ce3a2f446b4, type: 2}
-  - {fileID: 11400000, guid: 33dcd6ff0a2c79a69b93eecc77487b82, type: 2}
-  - {fileID: 11400000, guid: d98cab44b6513eaa282d50169c054f09, type: 2}
-  - {fileID: 11400000, guid: eca444efb94849576850f059276a6538, type: 2}
+  - {fileID: 11400000, guid: 1241a919293a50959b48a422b2113d66, type: 2}
+  - {fileID: 11400000, guid: b5ea5924a6f7eed289b5f77e0ff2134f, type: 2}
   damageRadius: 1
   maxTapDamage: 100
   minTapDamage: 100
   obstaclePositions:
-  - {x: 5, y: 20, z: 0}
-  - {x: -5, y: 20, z: 0}
+  - {x: 0, y: 20, z: 0}
+  - {x: 0, y: 12, z: 0}
+  - {x: -7, y: 8, z: 0}
+  - {x: 7, y: 8, z: 0}
   weaponPrefab: {fileID: 1407427171499844550, guid: 36dab7aef6d51332bbae2938d5fb8c48, type: 3}

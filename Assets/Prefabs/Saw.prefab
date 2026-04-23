@@ -208,8 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ce70995702f420eb180dc9afee40be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SawController
-  damage: 100
-  damageTickRate: 0.1
+  damage: 50
+  damageTickRate: 0.05
 --- !u!1 &4505096362481114288
 GameObject:
   m_ObjectHideFlags: 0
