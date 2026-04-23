@@ -5,7 +5,6 @@ public class SaveManager : MonoBehaviour
     public static SaveManager instance;
 
     private const string LevelIndexKey = "SavedLevelIndex";
-    [SerializeField] private int debugLevelIndex = 0;
 
     void Awake()
     {
@@ -30,20 +29,5 @@ public class SaveManager : MonoBehaviour
     {
         int savedIndex = PlayerPrefs.GetInt(LevelIndexKey, 0);
         return Mathf.Max(0, savedIndex);
-    }
-
-    [ContextMenu("Debug/Set Saved Level Index")]
-    private void DebugSetSavedLevelIndex()
-    {
-        SaveLevelIndex(debugLevelIndex);
-        Debug.Log("Debug set SavedLevelIndex = " + debugLevelIndex);
-    }
-
-    [ContextMenu("Debug/Clear Saved Level Index")]
-    private void DebugClearSavedLevelIndex()
-    {
-        PlayerPrefs.DeleteKey(LevelIndexKey);
-        PlayerPrefs.Save();
-        Debug.Log("Debug cleared SavedLevelIndex");
     }
 }

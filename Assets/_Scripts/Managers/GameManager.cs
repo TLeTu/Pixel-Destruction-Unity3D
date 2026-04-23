@@ -193,7 +193,9 @@ public class GameManager : MonoBehaviour
             case GameState.GameWin:
                 if (SaveManager.instance != null)
                 {
-                    SaveManager.instance.SaveLevelIndex(currentLevelIndex);
+                    int maxLevelIndex = Mathf.Max(0, levelConfigs.Count - 1);
+                    int nextUnlockedLevelIndex = Mathf.Min(currentLevelIndex + 1, maxLevelIndex);
+                    SaveManager.instance.SaveLevelIndex(nextUnlockedLevelIndex);
                 }
                 EndLevel();
                 InputManager.instance.DisableInput();
