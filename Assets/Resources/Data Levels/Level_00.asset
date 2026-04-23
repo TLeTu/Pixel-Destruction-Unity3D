@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c52e9905bf3456619e11e56432f7be1, type: 3}
   m_Name: Level_00
   m_EditorClassIdentifier: Assembly-CSharp::LevelConfig
-  targetDestroyCount: 50
+  targetDestroyCount: 1000
   scoreThreshold: 100
   initialWeaponCount: 1
   blocksToSpawn:
@@ -23,6 +23,4 @@ MonoBehaviour:
   obstaclePositions:
   - {x: 5, y: 20, z: 0}
   - {x: -5, y: 20, z: 0}
-  - {x: -5, y: 25, z: 0}
-  - {x: 5, y: 25, z: 0}
   weaponPrefab: {fileID: 1407427171499844550, guid: 36dab7aef6d51332bbae2938d5fb8c48, type: 3}

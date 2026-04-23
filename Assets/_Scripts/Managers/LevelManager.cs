@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour
     public LevelConfig levelConfig;
     public GameObject spawnPoint;
     public float spawnTime = 2f;
+    public int pixelSpawned = 300;
     private readonly HashSet<PixelBlockController> registeredBlocks = new HashSet<PixelBlockController>();
     private float spawnTimer = 0f;
     private bool isSpawning = false;
@@ -23,10 +24,17 @@ public class LevelManager : MonoBehaviour
     void Update()
     {
         // Call spawn block every spawnTime seconds
-        if (levelConfig == null || levelConfig.blocksToSpawn.Count == 0 || isSpawning == false)
+        if (levelConfig == null || isSpawning == false)
         {
             return;
         }
+
+        if (pixelSpawned > 0 && PoolManager.instance != null && PoolManager.instance.ActiveSpawnedPixelCount >= pixelSpawned)
+        {
+            spawnTimer = 0f;
+            return;
+        }
+
         SpawnBlock();
     }
     public void LoadLevel(LevelConfig config)

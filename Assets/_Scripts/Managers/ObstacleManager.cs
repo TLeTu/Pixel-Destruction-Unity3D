@@ -21,6 +21,10 @@ public class ObstacleManager : MonoBehaviour
     {
         weaponPrefab = prefab;
     }
+    public int GetObstaclesCount()
+    {
+        return obstacleWeaponMap.Count;
+    }
     public int AvailableWeaponSlots()
     {
         int count = 0;
@@ -81,7 +85,7 @@ public class ObstacleManager : MonoBehaviour
     }
     public void StartPlacingSession(int count)
     {
-        weaponsToPlaceQuota = count;
+        weaponsToPlaceQuota = Mathf.Max(0, count);
         weaponsPlacedThisSession = 0;
 
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -59,23 +60,40 @@ public class GameManager : MonoBehaviour
     }
     public void StartPlaceWeapon(int numberOfWeaponsToPlace)
     {
-        if (numberOfWeaponsToPlace <= 0)
+        int availableSlots = ObstacleManager.instance.AvailableWeaponSlots();
+        int placementQuota = Mathf.Min(numberOfWeaponsToPlace, availableSlots);
+
+        if (placementQuota <= 0)
         {
-            Debug.Log("Skipping Place Weapon phase because quota is 0.");
+            Debug.Log("Skipping Place Weapon phase because there are no available obstacle slots.");
             SetGameState(GameState.Playing);
             return;
         }
 
-        Debug.Log("Starting Place Weapon phase with quota: " + numberOfWeaponsToPlace);
-        ObstacleManager.instance.StartPlacingSession(numberOfWeaponsToPlace);
+        if (placementQuota < numberOfWeaponsToPlace)
+        {
+            Debug.Log("Reducing Place Weapon quota to available slots: " + placementQuota);
+        }
+
+        Debug.Log("Starting Place Weapon phase with quota: " + placementQuota);
+        ObstacleManager.instance.StartPlacingSession(placementQuota);
 
         SetGameState(GameState.PlaceWeapon);
     }
     public void StartUpgrade()
     {
+        if (ObstacleManager.instance.GetObstaclesCount() <= 0)
+        {
+            Debug.Log("Skipping upgrade phase because there are no obstacles.");
+            SetGameState(GameState.Playing);
+            return;
+        }
+
+        Debug.Log("Starting Upgrade phase. Presenting upgrade choices to player.");
         WeaponUpgrade upgrade1 = ObstacleManager.instance.GetRandomUpgrade();
         WeaponUpgrade upgrade2 = ObstacleManager.instance.GetRandomUpgrade();
-        while (upgrade2 == upgrade1)        {
+        while (upgrade2 == upgrade1)
+        {
             upgrade2 = ObstacleManager.instance.GetRandomUpgrade();
         }
         UIManager.instance.SetUpgradeButtons(upgrade1, upgrade2);
@@ -83,12 +101,14 @@ public class GameManager : MonoBehaviour
 
     public void EndLevel()
     {
+        Debug.Log("Ending level and cleaning up. Returning to main menu.");
         PauseGame(true);
         InputManager.instance.DisableInput();
 
         LevelManager.instance.CleanUpLevel();
         ObstacleManager.instance.CleanUp();
         PoolManager.instance.ReturnAllToPool();
+        PoolManager.instance.ResetSpawnedPixelCount();
         ScoreManager.instance.CleanUp();
         UIManager.instance.ClearWeaponSlotButtons();
 
@@ -144,6 +164,7 @@ public class GameManager : MonoBehaviour
                 if (currentState == GameState.MainMenu)
                 {
                     LoadLevel(0);
+                    PauseGame(false);
                     InputManager.instance.EnableInput();
                 }
                 else
@@ -153,20 +174,22 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.ChooseUpgrade:
+                PauseGame(true);
                 InputManager.instance.DisableInput();
                 StartUpgrade();
-                PauseGame(true);
                 break;
             case GameState.GameWin:
+                EndLevel();
                 InputManager.instance.DisableInput();
                 break;
             case GameState.PlaceWeapon:
-                InputManager.instance.EnableInput();
                 PauseGame(true);
+                InputManager.instance.EnableInput();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
+        Debug.Log("Game state changed to: " + newState);
 
         OnGameStateChanged?.Invoke(gameState);
     }

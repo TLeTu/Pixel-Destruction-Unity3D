@@ -12,6 +12,14 @@ public class PoolManager : MonoBehaviour
     public static PoolManager instance;
     private List<GameObject> attachedPixelPool;
     private List<GameObject> detachedPixelPool;
+    private int activeSpawnedPixelCount = 0;
+
+    public int ActiveSpawnedPixelCount => activeSpawnedPixelCount;
+
+    public void ResetSpawnedPixelCount()
+    {
+        activeSpawnedPixelCount = 0;
+    }
     void Awake()
     {
         instance = this;
@@ -43,12 +51,14 @@ public class PoolManager : MonoBehaviour
             if (!pixel.activeInHierarchy)
             {
                 pixel.SetActive(true);
+                activeSpawnedPixelCount++;
                 return pixel;
             }
         }
         GameObject newPixel = Instantiate(attachedPixelPrefab, attachedPixelPoolContainer.transform);
         newPixel.SetActive(true);
         attachedPixelPool.Add(newPixel);
+        activeSpawnedPixelCount++;
         return newPixel;
     }
     public GameObject GetDetachedPixel()
@@ -87,6 +97,10 @@ public class PoolManager : MonoBehaviour
         {
             if (detachedPixelPool.Contains(pixel))
             {
+                if (activeSpawnedPixelCount > 0)
+                {
+                    activeSpawnedPixelCount--;
+                }
                 pixel.SetActive(false);
                 pixel.transform.position = detachedPixelPoolContainer.transform.position;
                 pixel.transform.rotation = Quaternion.identity;
