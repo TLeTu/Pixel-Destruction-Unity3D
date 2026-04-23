@@ -16,7 +16,12 @@ MonoBehaviour:
   scoreThreshold: 100
   initialWeaponCount: 1
   blocksToSpawn:
-  - {fileID: 11400000, guid: 7ea936062ea2030aa9c1909775aa3610, type: 2}
+  - {fileID: 11400000, guid: c57630025f3d415448e01dbc7c008ed1, type: 2}
+  - {fileID: 11400000, guid: f42bc9656fda7ac2c875263678ab4b8c, type: 2}
+  - {fileID: 11400000, guid: e0a4edaba871897f7a9b2ce3a2f446b4, type: 2}
+  - {fileID: 11400000, guid: 33dcd6ff0a2c79a69b93eecc77487b82, type: 2}
+  - {fileID: 11400000, guid: d98cab44b6513eaa282d50169c054f09, type: 2}
+  - {fileID: 11400000, guid: eca444efb94849576850f059276a6538, type: 2}
   damageRadius: 1
   maxTapDamage: 100
   minTapDamage: 100
