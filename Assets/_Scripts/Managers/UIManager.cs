@@ -21,7 +21,15 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI scoreBarText;
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnEnable()

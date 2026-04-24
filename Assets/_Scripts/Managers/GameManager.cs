@@ -15,7 +15,15 @@ public class GameManager : MonoBehaviour
     private int currentLevelIndex = 0;
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         LoadLevelConfigs();
     }
     void Start()

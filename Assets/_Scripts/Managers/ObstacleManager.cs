@@ -15,7 +15,15 @@ public class ObstacleManager : MonoBehaviour
     private List<WeaponUpgrade> currentUpgrades = new List<WeaponUpgrade>();
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     public void LoadWeaponPrefab(GameObject prefab)
     {

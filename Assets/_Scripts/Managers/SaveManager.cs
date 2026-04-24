@@ -8,13 +8,15 @@ public class SaveManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance != null && instance != this)
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
         {
             Destroy(gameObject);
-            return;
         }
-
-        instance = this;
     }
 
     public void SaveLevelIndex(int levelIndex)

@@ -14,7 +14,15 @@ public class LevelManager : MonoBehaviour
     private bool isSpawning = false;
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()

@@ -11,7 +11,15 @@ public class ScoreManager : MonoBehaviour
     private bool reachedTarget = false;
     void Awake()
     {
-        instance = this;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     public void CleanUp()
     {
