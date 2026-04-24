@@ -3,8 +3,7 @@
 ## Demo
 - Demo video gameplay level 1-5: https://drive.google.com/file/d/1YT380Ktrjuan3lx-wlGwyHtHvX0PmGoJ/view?usp=drive_link
 - Thiết bị sử dụng để test gameplay: Redmi Note 9S Qualcomm Snapdragon 720G, 6GB RAM.
-- APK Game: https://drive.google.com/file/d/1D1aUfZg2bibd1PF7beHgSOI2fU6XHoVS/view?usp=drive_link
-
+- APK Game: https://github.com/TLeTu/Pixel-Destruction-Unity3D/releases/tag/v.0.5
 ## Hướng dẫn chạy project
 - Unity version: 6000.3.13f1
 - Chạy MainScene, dữ liệu của level, blocks được lưu trong Resources, Game sẽ tự load các level trong Resources
