@@ -44,7 +44,6 @@ public class PixelController : MonoBehaviour
         {
             StopCoroutine(shrinkRoutine);
         }
-
         shrinkRoutine = StartCoroutine(ShrinkAndDestroy());
     }
 

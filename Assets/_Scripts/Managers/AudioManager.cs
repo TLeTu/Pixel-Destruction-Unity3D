@@ -10,6 +10,7 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Clips")]
     public AudioClip musicClip;
     public AudioClip levelWinClip;
+    public AudioClip popClip;
     [Header("Audio Settings")]
     [SerializeField][Range(0f, 1f)] private float _musicVolume = 0.7f;
     [SerializeField][Range(0f, 1f)] private float _sfxVolume = 0.8f;
@@ -61,5 +62,22 @@ public class AudioManager : MonoBehaviour
         {
             PlaySFX(levelWinClip);
         }
+    }
+    public void PlayPopSFX()
+    {
+        if (popClip != null)
+        {
+            PlaySFX(popClip);
+        }
+    }
+    public void SetMusicVolume(float volume)
+    {
+        _musicVolume = Mathf.Clamp01(volume);
+        musicSource.volume = _muteMusic ? 0f : _musicVolume;
+    }
+    public void SetSFXVolume(float volume)
+    {
+        _sfxVolume = Mathf.Clamp01(volume);
+        sfxSource.volume = _muteSFX ? 0f : _sfxVolume;
     }
 }

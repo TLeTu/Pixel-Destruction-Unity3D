@@ -205,6 +205,7 @@ public class GameManager : MonoBehaviour
                     int nextUnlockedLevelIndex = Mathf.Min(currentLevelIndex + 1, maxLevelIndex);
                     SaveManager.instance.SaveLevelIndex(nextUnlockedLevelIndex);
                 }
+                AudioManager.instance.PlayLevelWinSFX();
                 EndLevel();
                 InputManager.instance.DisableInput();
                 break;

@@ -328,6 +328,7 @@ public class PixelBlockController : MonoBehaviour
             propBlock.SetColor("_BaseColor", detachedColor);
             detachedRend.SetPropertyBlock(propBlock);
         }
+        AudioManager.instance.PlayPopSFX();
 
         PoolManager.instance.ReturnToPool(pixel, true);
 
