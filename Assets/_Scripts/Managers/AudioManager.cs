@@ -80,4 +80,12 @@ public class AudioManager : MonoBehaviour
         _sfxVolume = Mathf.Clamp01(volume);
         sfxSource.volume = _muteSFX ? 0f : _sfxVolume;
     }
+    public float GetMusicVolume()
+    {
+        return _musicVolume;
+    }
+    public float GetSFXVolume()
+    {
+        return _sfxVolume;
+    }
 }

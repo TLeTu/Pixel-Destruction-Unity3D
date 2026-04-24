@@ -19,6 +19,10 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI XPBarText;
     public Slider scoreBar;
     public TextMeshProUGUI scoreBarText;
+    public GameObject settingPanel;
+    public GameObject musicSlider;
+    public GameObject sfxSlider;
+    private bool isSettingPanelOpen = false;
     void Awake()
     {
         if (instance == null)
@@ -152,6 +156,7 @@ public class UIManager : MonoBehaviour
         HidePanel(placeWeaponPanel);
         HidePanel(chooseUpgradePanel);
         HidePanel(gameWinPanel);
+        HidePanel(settingPanel);
     }
     public void SetUpgradeButtons(WeaponUpgrade upgrade1, WeaponUpgrade upgrade2)
     {
@@ -159,7 +164,8 @@ public class UIManager : MonoBehaviour
         upgradeBtn2.GetComponent<UpgradeBtnController>().upgrade = upgrade2;
         string label1 = "";
         string label2 = "";
-        switch (upgrade1)        {
+        switch (upgrade1)
+        {
             case WeaponUpgrade.Damage:
                 label1 = "Damage +";
                 break;
@@ -253,5 +259,26 @@ public class UIManager : MonoBehaviour
     public void ReplayLevelButton()
     {
         GameManager.instance.ReplayLevel();
+    }
+    public void ToggleSettingPanel()
+    {
+        if (settingPanel != null)
+        {
+            musicSlider.GetComponent<Slider>().value = AudioManager.instance.GetMusicVolume();
+            sfxSlider.GetComponent<Slider>().value = AudioManager.instance.GetSFXVolume();
+            isSettingPanelOpen = !isSettingPanelOpen;
+            settingPanel.SetActive(isSettingPanelOpen);
+        }
+    }
+    public void OnMusicVolumeChanged()
+    {
+        float volume = musicSlider.GetComponent<Slider>().value;
+        AudioManager.instance.SetMusicVolume(volume);
+    }
+    public void OnSFXVolumeChanged()
+    {
+        float volume = sfxSlider.GetComponent<Slider>().value;
+        AudioManager.instance.SetSFXVolume(volume);
+        AudioManager.instance.PlayPopSFX();
     }
 }
